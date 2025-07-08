@@ -62,6 +62,21 @@ services:
       - mongodb
     restart: unless-stopped
 
+  nlp-service:
+    image: python:3.9
+    container_name: nlp-service
+    command: >
+      sh -c "pip install fastapi uvicorn textblob spacy
+      && python -m spacy download en_core_web_sm
+      && uvicorn main:app --host 0.0.0.0 --port 5000"
+    volumes:
+      - ./nlp-service:/app
+    working_dir: /app
+    ports:
+      - "5000:5000"
+    networks:
+      - analytics-net
+      
 networks:
   analytics-net:
     driver: bridge
