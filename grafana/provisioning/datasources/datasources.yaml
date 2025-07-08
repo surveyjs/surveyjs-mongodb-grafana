@@ -19,7 +19,7 @@ datasources:
     secureJsonData:
       password: securepassword
 
-  - name: MongoDB Comunityt
+  - name: MongoDB Community
     type: marcusolsson-mongodb-datasource
     url: mongodb://admin:securepassword@mongodb:27017
     database: survey_db
