@@ -41,7 +41,8 @@ services:
     restart: unless-stopped
 
   grafana:
-    image: grafana/grafana:10.3.1
+    # image: grafana/grafana:10.3.1
+    build: ./grafana
     container_name: grafana
     ports:
       - "3001:3000"
@@ -51,6 +52,9 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
       - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=mongodb-grafana-datasource
+      - GF_INSTALL_PLUGINS=grafana-mongodb-datasource, grafana-simple-json-datasource
     networks:
       - analytics-net
     depends_on:

@@ -1,5 +1,6 @@
 import express from 'express';
 import { router } from './routes';
+import { router as grafana } from './routes/grafana';
 import { connectToCache, connectToDatabase, getRedisClient } from './db';
 
 const app = express();
@@ -7,6 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use('/api', router);
+app.use('/grafana', grafana);
 
 const cacheMiddleware = (key: string, ttl: number = 300) => {
   return async (req: any, res: any, next: any) => {

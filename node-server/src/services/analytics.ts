@@ -103,4 +103,28 @@ export class SurveyAnalytics {
             console.error('NLP processing error:', error);
         }
     }
+
+    // async function processTextResponse(response: Response) {
+    //     const textQuestions = Object.entries(response.answers)
+    //         .filter(([_, answer]) => typeof answer === 'string' && answer.length > 10);
+        
+    //     for (const [questionId, answer] of textQuestions) {
+    //         try {
+    //         const nlpResult = await axios.post('http://nlp-service:5000/analyze', {
+    //             text: answer
+    //         });
+            
+    //         // Сохраняем результаты NLP
+    //         await db.collection('responses').updateOne(
+    //             { _id: response._id },
+    //             { $set: { 
+    //                 [`nlp.${questionId}`]: nlpResult.data,
+    //                 [`processed.${questionId}`]: true 
+    //             } }
+    //         );
+    //         } catch (err) {
+    //         console.error('NLP processing error:', err);
+    //         }
+    //     }
+    // }    
 }

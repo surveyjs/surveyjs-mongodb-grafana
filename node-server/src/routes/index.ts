@@ -35,6 +35,15 @@ router.post('/responses', async (req, res) => {
     }
 });
 
+// app.post('/responses', async (req, res) => {
+//   const response = req.body;
+//   const result = await db.collection('responses').insertOne(response);
+  
+//   processTextResponse(response).catch(console.error);
+  
+//   res.status(201).json({...response, _id: result.insertedId});
+// });
+
 router.get('/surveys/:id', async (req, res) => {
     const db = getDb();
     try {

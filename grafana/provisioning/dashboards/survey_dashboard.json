@@ -1,38 +1,36 @@
 {
-  "dashboard": {
-    "title": "Survey Analytics",
-    "panels": [
-      {
-        "type": "stat",
-        "title": "Response Count",
-        "datasource": "MongoDB",
-        "targets": [
-          {
-            "queryType": "aggregate",
-            "collection": "responses",
-            "database": "survey_db",
-            "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $count: 'count' }]"
-          }
-        ],
-        "fieldConfig": {
-          "defaults": {
-            "unit": "short"
-          }
+  "title": "Survey Analytics",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Response Count",
+      "datasource": "MongoDB",
+      "targets": [
+        {
+          "queryType": "aggregate",
+          "collection": "responses",
+          "database": "survey_db",
+          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $count: 'count' }]"
         }
-      },
-      {
-        "type": "piechart",
-        "title": "Question Distribution",
-        "datasource": "MongoDB",
-        "targets": [
-          {
-            "queryType": "aggregate",
-            "collection": "responses",
-            "database": "survey_db",
-            "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $unwind: '$answers' }, { $group: { _id: '$answers.q1', count: { $sum: 1 } } }]"
-          }
-        ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        }
       }
-    ]
-  }
+    },
+    {
+      "type": "piechart",
+      "title": "Question Distribution",
+      "datasource": "MongoDB",
+      "targets": [
+        {
+          "queryType": "aggregate",
+          "collection": "responses",
+          "database": "survey_db",
+          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $unwind: '$answers' }, { $group: { _id: '$answers.q1', count: { $sum: 1 } } }]"
+        }
+      ]
+    }
+  ]
 }

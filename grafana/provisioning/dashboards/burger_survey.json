@@ -1,204 +1,201 @@
 {
-  "dashboard": {
-    "title": "Burger Satisfaction Dashboard",
-    "description": "Comprehensive analytics for burger satisfaction survey",
-    "tags": ["survey", "food", "analytics"],
-    "refresh": "30s",
-    "time": {
-      "from": "now-30d",
-      "to": "now"
-    },
-    "timezone": "browser",
-    "editable": true,
-    "panels": [
-      {
-        "type": "stat",
-        "title": "Total Responses",
-        "gridPos": {"x": 0, "y": 0, "w": 4, "h": 3},
-        "datasource": "MongoDB",
-        "options": {
-          "reduceOptions": {"values": false},
-          "orientation": "horizontal",
-          "textMode": "auto"
-        },
-        "targets": [{
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $count: 'count' }]",
-          "refId": "A"
-        }]
-      },
-      {
-        "type": "bargauge",
-        "title": "Average Satisfaction Rating",
-        "gridPos": {"x": 4, "y": 0, "w": 8, "h": 3},
-        "datasource": "MongoDB",
-        "options": {
-          "orientation": "horizontal",
-          "displayMode": "basic",
-          "min": 1,
-          "max": 5
-        },
-        "targets": [{
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $group: { _id: null, avg: { $avg: '$answers.q5' } } }]",
-          "refId": "A"
-        }]
-      },
-      {
-        "type": "timeseries",
-        "title": "Burgers Per Month Distribution",
-        "gridPos": {"x": 0, "y": 3, "w": 12, "h": 6},
-        "datasource": "MongoDB",
-        "fieldConfig": {
-          "defaults": {"unit": "short"},
-          "overrides": []
-        },
-        "options": {
-          "legend": {"displayMode": "list"},
-          "tooltip": {"mode": "single"}
-        },
-        "targets": [{
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $bucket: { groupBy: '$answers.q1', boundaries: [0, 3, 6, 9, 12, 15], default: '15+', output: { count: { $sum: 1 } } } }]",
-          "refId": "A"
-        }]
-      },
-      {
-        "type": "barchart",
-        "title": "Last Purchase Date Distribution",
-        "gridPos": {"x": 0, "y": 9, "w": 12, "h": 6},
-        "datasource": "MongoDB",
-        "options": {
-          "xField": "_id",
-          "yField": "count",
-          "colorField": "_id",
-          "legend": {"position": "bottom"}
-        },
-        "targets": [{
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$answers.q2' } }, count: { $sum: 1 } } }, { $sort: { _id: 1 } }]",
-          "refId": "A"
-        }]
-      },
-      {
-        "type": "piechart",
-        "title": "Favorite Burger Distribution",
-        "gridPos": {"x": 0, "y": 15, "w": 6, "h": 8},
-        "datasource": "MongoDB",
-        "options": {
-          "pieType": "pie",
-          "displayLabels": ["name", "percent"],
-          "legend": {"position": "bottom"}
-        },
-        "targets": [{
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $group: { _id: '$answers.q3', count: { $sum: 1 } } }]",
-          "refId": "A"
-        }]
-      },
-      {
-        "type": "barchart",
-        "title": "Toppings Preference",
-        "gridPos": {"x": 6, "y": 15, "w": 6, "h": 8},
-        "datasource": "MongoDB",
-        "options": {
-          "xField": "_id",
-          "yField": "count",
-          "colorField": "_id",
-          "orientation": "horizontal",
-          "legend": {"position": "bottom"}
-        },
-        "targets": [{
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $unwind: '$answers.q4' }, { $group: { _id: '$answers.q4', count: { $sum: 1 } } }, { $sort: { count: -1 } }]",
-          "refId": "A"
-        }]
-      },
-      {
-        "type": "heatmap",
-        "title": "Satisfaction Rating Distribution",
-        "gridPos": {"x": 0, "y": 23, "w": 6, "h": 8},
-        "datasource": "MongoDB",
-        "options": {
-          "xField": "_id",
-          "yField": "count",
-          "colorField": "count",
-          "legend": {"position": "bottom"}
-        },
-        "targets": [{
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $group: { _id: '$answers.q5', count: { $sum: 1 } } }, { $sort: { _id: 1 } }]",
-          "refId": "A"
-        }]
-      },
-      {
-        "type": "radar",
-        "title": "Aspect Ranking Importance",
-        "gridPos": {"x": 6, "y": 23, "w": 6, "h": 8},
-        "datasource": "MongoDB",
-        "options": {
-          "series": ["avg_rank"],
-          "legend": {"position": "bottom"}
-        },
-        "targets": [{
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $project: { ranks: { $objectToArray: '$answers.q6' } } }, { $unwind: '$ranks' }, { $group: { _id: '$ranks.k', avg_rank: { $avg: '$ranks.v' } } }]",
-          "refId": "A"
-        }]
-      },
-      {
-        "type": "scatter",
-        "title": "Satisfaction vs Burger Consumption",
-        "gridPos": {"x": 0, "y": 31, "w": 12, "h": 8},
-        "datasource": "MongoDB",
-        "options": {
-          "pointSize": 5,
-          "showLine": true,
-          "lineWidth": 2
-        },
-        "targets": [{
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $project: { burgers: '$answers.q1', satisfaction: '$answers.q5' } }]",
-          "refId": "A"
-        }]
-      }
-    ],
-    "templating": {
-      "list": [
-        {
-          "name": "survey",
-          "query": "burger_survey_2023",
-          "datasource": "MongoDB",
-          "type": "constant",
-          "label": "Survey ID"
-        },
-        {
-          "name": "time_range",
-          "query": "now-30d,now",
-          "datasource": "MongoDB",
-          "type": "interval",
-          "label": "Time Range"
-        }
-      ]
-    }
+  "title": "Burger Satisfaction Dashboard",
+  "description": "Comprehensive analytics for burger satisfaction survey",
+  "tags": ["survey", "food", "analytics"],
+  "refresh": "30s",
+  "time": {
+    "from": "now-30d",
+    "to": "now"
   },
-  "overwrite": true
+  "timezone": "browser",
+  "editable": true,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total Responses",
+      "gridPos": {"x": 0, "y": 0, "w": 4, "h": 3},
+      "datasource": "MongoDB",
+      "options": {
+        "reduceOptions": {"values": false},
+        "orientation": "horizontal",
+        "textMode": "auto"
+      },
+      "targets": [{
+        "queryType": "aggregate",
+        "collection": "responses",
+        "database": "survey_db",
+        "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $count: 'count' }]",
+        "refId": "A"
+      }]
+    },
+    {
+      "type": "bargauge",
+      "title": "Average Satisfaction Rating",
+      "gridPos": {"x": 4, "y": 0, "w": 8, "h": 3},
+      "datasource": "MongoDB",
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "basic",
+        "min": 1,
+        "max": 5
+      },
+      "targets": [{
+        "queryType": "aggregate",
+        "collection": "responses",
+        "database": "survey_db",
+        "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $group: { _id: null, avg: { $avg: '$answers.q5' } } }]",
+        "refId": "A"
+      }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Burgers Per Month Distribution",
+      "gridPos": {"x": 0, "y": 3, "w": 12, "h": 6},
+      "datasource": "MongoDB",
+      "fieldConfig": {
+        "defaults": {"unit": "short"},
+        "overrides": []
+      },
+      "options": {
+        "legend": {"displayMode": "list"},
+        "tooltip": {"mode": "single"}
+      },
+      "targets": [{
+        "queryType": "aggregate",
+        "collection": "responses",
+        "database": "survey_db",
+        "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $bucket: { groupBy: '$answers.q1', boundaries: [0, 3, 6, 9, 12, 15], default: '15+', output: { count: { $sum: 1 } } } }]",
+        "refId": "A"
+      }]
+    },
+    {
+      "type": "barchart",
+      "title": "Last Purchase Date Distribution",
+      "gridPos": {"x": 0, "y": 9, "w": 12, "h": 6},
+      "datasource": "MongoDB",
+      "options": {
+        "xField": "_id",
+        "yField": "count",
+        "colorField": "_id",
+        "legend": {"position": "bottom"}
+      },
+      "targets": [{
+        "queryType": "aggregate",
+        "collection": "responses",
+        "database": "survey_db",
+        "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$answers.q2' } }, count: { $sum: 1 } } }, { $sort: { _id: 1 } }]",
+        "refId": "A"
+      }]
+    },
+    {
+      "type": "piechart",
+      "title": "Favorite Burger Distribution",
+      "gridPos": {"x": 0, "y": 15, "w": 6, "h": 8},
+      "datasource": "MongoDB",
+      "options": {
+        "pieType": "pie",
+        "displayLabels": ["name", "percent"],
+        "legend": {"position": "bottom"}
+      },
+      "targets": [{
+        "queryType": "aggregate",
+        "collection": "responses",
+        "database": "survey_db",
+        "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $group: { _id: '$answers.q3', count: { $sum: 1 } } }]",
+        "refId": "A"
+      }]
+    },
+    {
+      "type": "barchart",
+      "title": "Toppings Preference",
+      "gridPos": {"x": 6, "y": 15, "w": 6, "h": 8},
+      "datasource": "MongoDB",
+      "options": {
+        "xField": "_id",
+        "yField": "count",
+        "colorField": "_id",
+        "orientation": "horizontal",
+        "legend": {"position": "bottom"}
+      },
+      "targets": [{
+        "queryType": "aggregate",
+        "collection": "responses",
+        "database": "survey_db",
+        "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $unwind: '$answers.q4' }, { $group: { _id: '$answers.q4', count: { $sum: 1 } } }, { $sort: { count: -1 } }]",
+        "refId": "A"
+      }]
+    },
+    {
+      "type": "heatmap",
+      "title": "Satisfaction Rating Distribution",
+      "gridPos": {"x": 0, "y": 23, "w": 6, "h": 8},
+      "datasource": "MongoDB",
+      "options": {
+        "xField": "_id",
+        "yField": "count",
+        "colorField": "count",
+        "legend": {"position": "bottom"}
+      },
+      "targets": [{
+        "queryType": "aggregate",
+        "collection": "responses",
+        "database": "survey_db",
+        "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $group: { _id: '$answers.q5', count: { $sum: 1 } } }, { $sort: { _id: 1 } }]",
+        "refId": "A"
+      }]
+    },
+    {
+      "type": "radar",
+      "title": "Aspect Ranking Importance",
+      "gridPos": {"x": 6, "y": 23, "w": 6, "h": 8},
+      "datasource": "MongoDB",
+      "options": {
+        "series": ["avg_rank"],
+        "legend": {"position": "bottom"}
+      },
+      "targets": [{
+        "queryType": "aggregate",
+        "collection": "responses",
+        "database": "survey_db",
+        "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $project: { ranks: { $objectToArray: '$answers.q6' } } }, { $unwind: '$ranks' }, { $group: { _id: '$ranks.k', avg_rank: { $avg: '$ranks.v' } } }]",
+        "refId": "A"
+      }]
+    },
+    {
+      "type": "scatter",
+      "title": "Satisfaction vs Burger Consumption",
+      "gridPos": {"x": 0, "y": 31, "w": 12, "h": 8},
+      "datasource": "MongoDB",
+      "options": {
+        "pointSize": 5,
+        "showLine": true,
+        "lineWidth": 2
+      },
+      "targets": [{
+        "queryType": "aggregate",
+        "collection": "responses",
+        "database": "survey_db",
+        "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $project: { burgers: '$answers.q1', satisfaction: '$answers.q5' } }]",
+        "refId": "A"
+      }]
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "survey",
+        "query": "burger_survey_2023",
+        "datasource": "MongoDB",
+        "type": "constant",
+        "label": "Survey ID"
+      },
+      {
+        "name": "time_range",
+        "query": "now-30d,now",
+        "datasource": "MongoDB",
+        "type": "interval",
+        "label": "Time Range"
+      }
+    ]
+  }
 }
