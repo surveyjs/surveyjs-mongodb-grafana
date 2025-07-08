@@ -1,0 +1,14 @@
+apiVersion: 1
+
+datasources:
+  - name: MongoDB
+    type: mongodb
+    access: proxy
+    url: mongodb://survey_user:userpassword@mongodb:27017/survey_db
+    jsonData:
+      tlsAuth: false
+      tlsAuthWithCACert: false
+      timezone: "browser"
+      sslmode: "disable"
+    secureJsonData: {}
+    editable: true
