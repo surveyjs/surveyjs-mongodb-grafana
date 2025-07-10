@@ -6,6 +6,7 @@ datasources:
     access: proxy
     url: http://node-server:3000/grafana
     isDefault: true
+    editable: true
 
   - name: MongoDB Official
     type: grafana-mongodb-datasource
