@@ -29,3 +29,11 @@ datasources:
       tlsAuth: false
     secureJsonData:
       password: securepassword
+
+  - name: SurveyJS
+    type: surveyjs-grafana-datasource
+    access: proxy
+    url: http://node-server:3000/grafana
+    editable: true
+    path: "path/"
+    apiKey: "your_api_key_here"

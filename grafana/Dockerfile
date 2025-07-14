@@ -3,6 +3,7 @@ FROM grafana/grafana:10.3.1
 USER root
 
 RUN grafana-cli plugins install grafana-mongodb-datasource
+RUN grafana-cli plugins install yesoreyeram-infinity-datasource
 # RUN grafana-cli plugins install marcusolsson-mongodb-datasource
 
 USER grafana
