@@ -2,3 +2,5 @@ node_modules
 dist
 data
 grafana/plugins
+__pycache__
+.venv

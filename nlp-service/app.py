@@ -2,17 +2,12 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import spacy
 from textblob import TextBlob
+from datetime import datetime
 
 app = FastAPI()
 nlp = spacy.load("en_core_web_sm")
 
-class TextRequest(BaseModel):
-    text: str
-
-@app.post("/analyze")
-def analyze_text(request: TextRequest):
-    text = request.text
-    
+def process(text):
     # Sentiment Analysis
     blob = TextBlob(text)
     sentiment = {
@@ -36,4 +31,20 @@ def analyze_text(request: TextRequest):
         "entities": entities,
         "key_phrases": key_phrases,
         "processed_text": text
-    }
+    }    
+
+class TextRequest(BaseModel):
+    text: str
+
+@app.get("/health")
+async def root():
+    return { "status": 'healthy', "timestamp": datetime.now().isoformat() }
+
+@app.get("/sentiment")
+def sentiment_text(text):
+    return process(text)
+
+@app.post("/analyze")
+def analyze_text(request: TextRequest):
+    text = request.text
+    return process(text)
