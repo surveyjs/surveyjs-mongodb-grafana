@@ -114,7 +114,6 @@ export class SurveyAnalytics {
     //             text: answer
     //         });
             
-    //         // Сохраняем результаты NLP
     //         await db.collection('responses').updateOne(
     //             { _id: response._id },
     //             { $set: { 
