@@ -33,6 +33,7 @@ services:
       - ./node-server/dist:/app/dist
     ports:
       - "3000:3000"
+      - "9229:9229"
     depends_on:
       - mongodb
       - redis
