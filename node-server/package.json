@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "build": "tsc",
-    "start": "dotenv -e .env node dist/index.js",
+    "start": "dotenv -e .env node --inspect=0.0.0.0:9229 dist/index.js",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
