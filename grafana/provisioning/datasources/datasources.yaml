@@ -33,7 +33,13 @@ datasources:
   - name: SurveyJS
     type: surveyjs-grafana-datasource
     access: proxy
-    url: http://node-server:3000/grafana
+    basicAuth: false
     editable: true
-    path: "path/"
-    apiKey: "your_api_key_here"
+    enabled: true
+    url: http://node-server:3000/grafana
+    jsonData:
+      url: http://node-server:3000/grafana
+      path: ""
+      surveyId: "burger_survey_2023"
+    secureJsonData:
+      apiKey: "your_api_key_here"

@@ -26,7 +26,7 @@ router.post("/search", async (req, res) => {
       return res.json(['response_count']);
     }
     
-    const survey = await db.collection<{_id: string, questions: Array<any>}>('surveys').findOne({ _id: "burger_survey_2023" });
+    const survey = await db.collection<{_id: string, questions: Array<any>}>('surveys').findOne({ _id: query.surveyId || "burger_survey_2023" });
     res.json((survey?.questions || []).map(q => q.id));
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -43,6 +43,17 @@ router.post("/query", async (req, res) => {
     const to = new Date(range.to).getTime();
     
     const results = await Promise.all(targets.map(async (target: any) => {
+      if (!!target.surveyId) {
+          const stats = await surveyAnalytics.getQuestionStats(target.surveyId, target.questionId);
+          return {
+              "columns": [
+                  { "text": "Choices", "type": "string" },
+                  { "text": "Count", "type": "number" }
+              ],
+              "rows": Object.keys(stats.choices).map(choice => [choice, stats.choices[choice]]),
+              "type": "table"
+          };
+      }
       if (target.type === 'table') {
         const stats = await surveyAnalytics.getQuestionStats("burger_survey_2023", target.target);
         return {
