@@ -195,3 +195,87 @@ questions.forEach(question => {
 });
 
 print("Burger survey initialized successfully!");
+
+// Configuration
+const SURVEY_ID = 'burger_survey_2023';
+const RESPONSES_COUNT = 1000;
+
+// Survey options
+const burgerOptions = [
+  "Classic Cheeseburger", 
+  "BBQ Bacon", 
+  "Mushroom Swiss", 
+  "Veggie Deluxe", 
+  "Double Trouble"
+];
+
+const toppingOptions = [
+  "Lettuce", "Tomato", "Onion", "Pickles", 
+  "Bacon", "Extra Cheese", "Avocado", "Jalapenos"
+];
+
+const aspects = ["Taste", "Price", "Portion Size", "Freshness", "Presentation"];
+
+// Generate random responses
+function generateResponses(count) {
+  const responses = [];
+  const startDate = new Date(2023, 0, 1); // Jan 1, 2023
+  const endDate = new Date(); // Today
+  
+  for (let i = 0; i < count; i++) {
+    // Random date in 2023
+    const randomDate = new Date(startDate.getTime() + Math.random() * 
+                          (endDate.getTime() - startDate.getTime()));
+    
+    // Random burger consumption (0-30 per month)
+    const burgersPerMonth = Math.floor(Math.random() * 31);
+    
+    // Random favorite burger
+    const favoriteBurger = burgerOptions[
+      Math.floor(Math.random() * burgerOptions.length)
+    ];
+    
+    // Random toppings (1-5 selections)
+    const toppingsCount = 1 + Math.floor(Math.random() * 5);
+    const selectedToppings = toppingOptions
+      .slice()
+      .sort(() => 0.5 - Math.random())
+      .slice(0, toppingsCount);
+    
+    // Random rating (1-5)
+    const rating = 1 + Math.floor(Math.random() * 5);
+    
+    // Random ranking
+    const shuffledAspects = aspects.slice().sort(() => 0.5 - Math.random());
+    const ranking = {};
+    shuffledAspects.forEach((aspect, index) => {
+      ranking[aspect] = index + 1;
+    });
+    
+    responses.push({
+      surveyId: SURVEY_ID,
+      userId: "user_" + (1000 + i),
+      answers: {
+        q1: burgersPerMonth,
+        q2: randomDate,
+        q3: favoriteBurger,
+        q4: selectedToppings,
+        q5: rating,
+        q6: ranking
+      },
+      createdAt: randomDate
+    });
+  }
+  
+  return responses;
+}
+
+// Main execution
+print("Generating survey responses...");
+const randomResponses = generateResponses(RESPONSES_COUNT);
+
+print("Inserting responses into database...");
+const result = db.responses.insertMany(randomResponses);
+
+print(`Successfully inserted ${result.insertedCount} responses!`);
+print("Data initialization complete.");
