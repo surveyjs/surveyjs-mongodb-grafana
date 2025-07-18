@@ -7,7 +7,7 @@ export const router = Router();
 
 router.get("/", (req, res) => {
   res.json({
-    message: "Grafana data source is running",
+    message: "SurveyJS Grafana data source API is running",
     routes: {
       query: "/grafana/query",
       annotations: "/grafana/annotations",
@@ -22,12 +22,13 @@ router.post("/search", async (req, res) => {
     const { query } = req.body;
     
     // Example search logic, modify as needed
-    if (query === 'response_count') {
-      return res.json(['response_count']);
+    if (query === 'response_count' || query === 'table_data') {
+      return res.json([query]);
     }
     
     const survey = await db.collection<{_id: string, questions: Array<any>}>('surveys').findOne({ _id: query.surveyId || "burger_survey_2023" });
-    res.json((survey?.questions || []).map(q => q.id));
+    res.json((survey?.questions || []).map(q => ({ label: q.text || q.title, value: q.id || q.name })));
+
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -44,31 +45,21 @@ router.post("/query", async (req, res) => {
     
     const results = await Promise.all(targets.map(async (target: any) => {
       if (!!target.surveyId) {
+          if(!target.questionId) {
+            // const count = await getDb().collection('responses').countDocuments({
+            //   createdAt: { $gte: new Date(from), $lte: new Date(to) }
+            // });
+            const totalCount = await db.collection('responses').countDocuments({ surveyId: target.surveyId });
+            return {
+              type: 'total',
+              count: totalCount
+            }
+          }
           const stats = await surveyAnalytics.getQuestionStats(target.surveyId, target.questionId);
-          return {
-              "columns": [
-                  { "text": "Choices", "type": "string" },
-                  { "text": "Count", "type": "number" }
-              ],
-              "rows": Object.keys(stats.choices).map(choice => [choice, stats.choices[choice]]),
-              "type": "table"
-          };
+          return stats;
       }
-      if (target.type === 'table') {
-        const stats = await surveyAnalytics.getQuestionStats("burger_survey_2023", target.target);
-        return {
-          "columns":[
-            {"text":"Choices","type":"string"},
-            {"text":"Count","type":"number"}
-          ],
-          "rows": Object.keys(stats.choices).map(choice => [ choice,  stats.choices[choice]]),
-          "type":"table"
-        };
-      }
+      // Example test data, modify as needed
       if (target.target === 'response_count') {
-        // const count = await getDb().collection('responses').countDocuments({
-        //   createdAt: { $gte: new Date(from), $lte: new Date(to) }
-        // });
         const count = Math.floor(Math.random() * 100); // Simulated count for testing
         return {
           target: "response_count",
