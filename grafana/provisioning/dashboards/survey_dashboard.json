@@ -1,36 +1,252 @@
 {
-  "title": "Survey Analytics",
+  "title": "Burger Survey Analytics",
   "panels": [
     {
-      "type": "stat",
-      "title": "Response Count",
-      "datasource": "MongoDB",
+      "datasource": {
+        "type": "surveyjs-grafana-datasource",
+        "uid": "P35291074DEBCE0FA"
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 0,
+        "y": 0
+      },
       "targets": [
         {
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $count: 'count' }]"
+          "datasource": {
+            "type": "surveyjs-grafana-datasource",
+            "uid": "P35291074DEBCE0FA"
+          },
+          "refId": "A"
         }
       ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "short"
-        }
-      }
+      "title": "Total Responses",
+      "type": "stat"
     },
     {
-      "type": "piechart",
-      "title": "Question Distribution",
-      "datasource": "MongoDB",
+      "datasource": {
+        "type": "surveyjs-grafana-datasource",
+        "uid": "P35291074DEBCE0FA"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "max": 5,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "purple",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 2
+              }
+            ]
+          },
+          "unitScale": true
+        }
+      },      
+      "gridPos": {
+        "h": 3,
+        "w": 13,
+        "x": 4,
+        "y": 0
+      },
+      "options": {
+        "displayMode": "gradient",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Average$/",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },      
       "targets": [
         {
-          "queryType": "aggregate",
-          "collection": "responses",
-          "database": "survey_db",
-          "pipeline": "[{ $match: { surveyId: 'burger_survey_2023' } }, { $unwind: '$answers' }, { $group: { _id: '$answers.q1', count: { $sum: 1 } } }]"
+          "datasource": {
+            "type": "surveyjs-grafana-datasource",
+            "uid": "P35291074DEBCE0FA"
+          },
+          "questionId": "q5",
+          "refId": "A"
         }
-      ]
+      ],
+      "title": "Average Satisfaction Rating",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "surveyjs-grafana-datasource",
+        "uid": "P35291074DEBCE0FA"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 0,
+        "y": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "surveyjs-grafana-datasource",
+            "uid": "P35291074DEBCE0FA"
+          },
+          "questionId": "q3",
+          "refId": "A"
+        }
+      ],
+      "title": "Favorite Burger Distribution",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "Count"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "surveyjs-grafana-datasource",
+        "uid": "P35291074DEBCE0FA"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 9,
+        "y": 3
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "surveyjs-grafana-datasource",
+            "uid": "P35291074DEBCE0FA"
+          },
+          "questionId": "q6",
+          "refId": "A"
+        }
+      ],
+      "title": "Aspect Ranking Importance",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "surveyjs-grafana-datasource",
+        "uid": "P35291074DEBCE0FA"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 0,
+        "y": 11
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "surveyjs-grafana-datasource",
+            "uid": "P35291074DEBCE0FA"
+          },
+          "questionId": "q4",
+          "refId": "A"
+        }
+      ],
+      "title": "Toppings Preference",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "Count"
+              }
+            ],
+            "fields": {}
+          }
+        }
+      ],
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "surveyjs-grafana-datasource",
+        "uid": "P35291074DEBCE0FA"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 5,
+        "x": 12,
+        "y": 11
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "surveyjs-grafana-datasource",
+            "uid": "P35291074DEBCE0FA"
+          },
+          "queryText": "values",
+          "questionId": "q5",
+          "refId": "A"
+        }
+      ],
+      "title": "Satisfaction Rating Distribution",
+      "type": "histogram"
+    },
+    {
+      "datasource": {
+        "type": "surveyjs-grafana-datasource",
+        "uid": "P35291074DEBCE0FA"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dateTimeAsLocal"
+        }
+      },
+      "options": {
+        "bucketSize": 2592000000
+      },      
+      "gridPos": {
+        "h": 10,
+        "w": 17,
+        "x": 0,
+        "y": 21
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "surveyjs-grafana-datasource",
+            "uid": "P35291074DEBCE0FA"
+          },
+          "hide": false,
+          "queryText": "values",
+          "questionId": "q2",
+          "refId": "A"
+        }
+      ],
+      "title": "Burgers Per Month Distribution",
+      "type": "histogram"
     }
   ]
 }
