@@ -80,7 +80,7 @@ const responses = [
       q3: "BBQ Bacon",
       q4: ["Bacon", "Extra Cheese", "Onion"],
       q5: 5,
-      q6: { "Taste": 1, "Price": 3, "Portion Size": 2, "Freshness": 4, "Presentation": 5 }
+      q6: [ "Taste", "Price", "Portion Size", "Freshness", "Presentation" ]
     },
     createdAt: new Date("2023-10-16T10:30:00Z")
   },
@@ -93,7 +93,7 @@ const responses = [
       q3: "Classic Cheeseburger",
       q4: ["Lettuce", "Tomato", "Onion", "Pickles"],
       q5: 4,
-      q6: { "Price": 1, "Freshness": 2, "Taste": 3, "Portion Size": 4, "Presentation": 5 }
+      q6: [ "Price", "Freshness", "Taste", "Portion Size", "Presentation" ]
     },
     createdAt: new Date("2023-10-16T11:15:00Z")
   },
@@ -106,7 +106,7 @@ const responses = [
       q3: "Mushroom Swiss",
       q4: ["Mushrooms", "Swiss Cheese", "Onion"],
       q5: 3,
-      q6: { "Freshness": 1, "Taste": 2, "Portion Size": 3, "Price": 4, "Presentation": 5 }
+      q6: [ "Freshness", "Taste", "Portion Size", "Price", "Presentation" ]
     },
     createdAt: new Date("2023-10-16T14:20:00Z")
   },
@@ -119,7 +119,7 @@ const responses = [
       q3: "Double Trouble",
       q4: ["Bacon", "Extra Cheese", "Jalapenos"],
       q5: 5,
-      q6: { "Portion Size": 1, "Taste": 2, "Price": 3, "Presentation": 4, "Freshness": 5 }
+      q6: [ "Portion Size", "Taste", "Price", "Presentation", "Freshness" ]
     },
     createdAt: new Date("2023-10-16T15:45:00Z")
   },
@@ -132,7 +132,7 @@ const responses = [
       q3: "Veggie Deluxe",
       q4: ["Avocado", "Tomato", "Lettuce"],
       q5: 4,
-      q6: { "Presentation": 1, "Freshness": 2, "Taste": 3, "Portion Size": 4, "Price": 5 }
+      q6: [ "Presentation", "Freshness", "Taste", "Portion Size", "Price" ]
     },
     createdAt: new Date("2023-10-16T16:30:00Z")
   }
@@ -216,11 +216,22 @@ const toppingOptions = [
 
 const aspects = ["Taste", "Price", "Portion Size", "Freshness", "Presentation"];
 
+function generateGaussian(mean, std) {
+  var _2PI = Math.PI * 2;
+  var u1 = Math.random();
+  var u2 = Math.random();
+  
+  var z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(_2PI * u2);
+  var z1 = Math.sqrt(-2.0 * Math.log(u1)) * Math.sin(_2PI * u2);
+
+  return z0 * std + mean;
+}
+
 // Generate random responses
 function generateResponses(count) {
   const responses = [];
   const startDate = new Date(2023, 0, 1); // Jan 1, 2023
-  const endDate = new Date(); // Today
+  const endDate = new Date(2023, 11, 31); // Dec 31, 2023
   
   for (let i = 0; i < count; i++) {
     // Random date in 2023
@@ -232,25 +243,25 @@ function generateResponses(count) {
     
     // Random favorite burger
     const favoriteBurger = burgerOptions[
-      Math.floor(Math.random() * burgerOptions.length)
+      Math.floor(generateGaussian(0, 1) * burgerOptions.length)
     ];
     
     // Random toppings (1-5 selections)
-    const toppingsCount = 1 + Math.floor(Math.random() * 5);
+    const toppingsCount = 1 + Math.floor(generateGaussian(0, 1) * 5);
     const selectedToppings = toppingOptions
       .slice()
-      .sort(() => 0.5 - Math.random())
+      .sort(() => 0.5 - generateGaussian(0, 1))
       .slice(0, toppingsCount);
     
     // Random rating (1-5)
     const rating = 1 + Math.floor(Math.random() * 5);
     
     // Random ranking
-    const shuffledAspects = aspects.slice().sort(() => 0.5 - Math.random());
-    const ranking = {};
-    shuffledAspects.forEach((aspect, index) => {
-      ranking[aspect] = index + 1;
-    });
+    const shuffledAspects = aspects.slice().sort(() => 0.5 - generateGaussian(0, 1));
+    // const ranking = {};
+    // shuffledAspects.forEach((aspect, index) => {
+    //   ranking[aspect] = index + 1;
+    // });
     
     responses.push({
       surveyId: SURVEY_ID,
@@ -261,7 +272,7 @@ function generateResponses(count) {
         q3: favoriteBurger,
         q4: selectedToppings,
         q5: rating,
-        q6: ranking
+        q6: shuffledAspects // ranking
       },
       createdAt: randomDate
     });
