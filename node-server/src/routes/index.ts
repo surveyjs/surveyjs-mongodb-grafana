@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { SurveyAnalytics } from '../services/analytics';
 import { getDb, getRedisClient } from '../db';
+import { MongoStorage } from '../db-adapters/mongo';
 
 export const router = Router();
 
@@ -17,23 +18,41 @@ router.get('/stats/:surveyId/:questionId', async (req, res) => {
     }
 });
 
-router.post('/responses', async (req, res) => {
+router.post("/post", async (req, res) => {
     const db = getDb();
     const redisClient = getRedisClient();
     const surveyAnalytics = new SurveyAnalytics(db, redisClient);
     try {
-        const response = req.body;
-        const result = await db.collection('responses').insertOne(response);
-        
-        surveyAnalytics.updateStatsCache(response.surveyId).catch(console.error);
-        
-        surveyAnalytics.processTextResponses(response).catch(console.error);
-        
-        res.status(201).json({ ...response, id: result.insertedId });
+        const storage = new MongoStorage(db);
+        const postId = req.body.postId;
+        const result = req.body.surveyResult;
+        storage.postResults(postId, result, async (storedResult: any) => {
+            await surveyAnalytics.processTextResponses(storedResult).catch(console.error);
+            surveyAnalytics.updateStatsCache(postId).catch(console.error);
+            res.status(201).json({ ...storedResult, id: storedResult.insertedId });
+        });
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }
 });
+
+// router.post('/responses', async (req, res) => {
+//     const db = getDb();
+//     const redisClient = getRedisClient();
+//     const surveyAnalytics = new SurveyAnalytics(db, redisClient);
+//     try {
+//         const response = req.body;
+//         const result = await db.collection('responses').insertOne(response);
+        
+//         surveyAnalytics.updateStatsCache(response.surveyId).catch(console.error);
+        
+//         surveyAnalytics.processTextResponses(response).catch(console.error);
+        
+//         res.status(201).json({ ...response, id: result.insertedId });
+//     } catch (error: any) {
+//         res.status(500).json({ error: error.message });
+//     }
+// });
 
 // app.post('/responses', async (req, res) => {
 //   const response = req.body;

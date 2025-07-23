@@ -49,6 +49,7 @@ export class SurveyAnalytics {
                 stats = await this.calculateRankingStats(surveyId, questionId);
                 break;
             case 'text':
+            case 'comment':
                 stats = await this.calculateTextStats(surveyId, questionId);
                 break;
             default:
@@ -282,10 +283,10 @@ export class SurveyAnalytics {
         if (nlpData.length > 0) {
             const sentiments = nlpData.map(nlp => nlp.sentiment || 0);
             sentimentAnalysis = {
-                average: sentiments.reduce((sum, val) => sum + val, 0) / sentiments.length,
-                positive: sentiments.filter(s => s > 0.1).length,
-                negative: sentiments.filter(s => s < -0.1).length,
-                neutral: sentiments.filter(s => s >= -0.1 && s <= 0.1).length
+                average: sentiments.reduce((sum, s) => sum + s.polarity, 0) / sentiments.length,
+                positive: sentiments.filter(s => s.polarity > 0.1).length,
+                negative: sentiments.filter(s => s.polarity < -0.1).length,
+                neutral: sentiments.filter(s => s.polarity >= -0.1 && s.polarity <= 0.1).length
             };
         }
         

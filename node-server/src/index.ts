@@ -69,15 +69,6 @@ app.post(apiBaseAddress + "/changeJson", (req, res) => {
   });
 });
 
-app.post(apiBaseAddress + "/post", (req, res) => {
-  const storage = getStorage(req);
-  const postId = req.body.postId;
-  const surveyResult = req.body.surveyResult;
-  storage.postResults(postId, surveyResult, (result: any) => {
-    sendJsonResult(res, result.json);
-  });
-});
-
 app.get(apiBaseAddress + "/delete", (req, res) => {
   const storage = getStorage(req);
   const id = req.query["id"] as string;

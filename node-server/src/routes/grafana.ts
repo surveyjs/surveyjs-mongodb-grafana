@@ -32,7 +32,7 @@ router.post("/search", async (req, res) => {
       return res.status(404).json({ error: 'Survey not found' });
     }
     const surveyModel = new SurveyModel(survey.json);
-    res.json((surveyModel.getAllQuestions() || []).map(q => ({ label: q.text || q.title, value: q.id || q.name })));
+    res.json((surveyModel.getAllQuestions() || []).map(q => ({ label: q.text || q.title, value: q.name || q.id })));
 
   } catch (error: any) {
     res.status(500).json({ error: error.message });
