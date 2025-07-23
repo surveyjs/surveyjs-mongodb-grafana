@@ -31,6 +31,7 @@ services:
       - REDIS_URL=redis://redis:6379
     volumes:
       - ./node-server/dist:/app/dist
+      - ./node-server/public:/app/public
     ports:
       - "3000:3000"
       - "9229:9229"

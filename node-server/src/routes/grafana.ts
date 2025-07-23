@@ -2,6 +2,7 @@
 import { Router } from 'express';
 import { getDb, getRedisClient } from '../db';
 import { SurveyAnalytics } from '../services/analytics';
+import { SurveyModel } from 'survey-core';
 
 export const router = Router();
 
@@ -26,8 +27,12 @@ router.post("/search", async (req, res) => {
       return res.json([query]);
     }
     
-    const survey = await db.collection<{_id: string, questions: Array<any>}>('surveys').findOne({ _id: query.surveyId || "burger_survey_2023" });
-    res.json((survey?.questions || []).map(q => ({ label: q.text || q.title, value: q.id || q.name })));
+    const survey = await db.collection<{_id: string, json: any}>('surveys').findOne({ _id: query.surveyId || "burger_survey_2023" });
+    if (!survey) {
+      return res.status(404).json({ error: 'Survey not found' });
+    }
+    const surveyModel = new SurveyModel(survey.json);
+    res.json((surveyModel.getAllQuestions() || []).map(q => ({ label: q.text || q.title, value: q.id || q.name })));
 
   } catch (error: any) {
     res.status(500).json({ error: error.message });

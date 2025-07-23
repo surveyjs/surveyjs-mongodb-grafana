@@ -176,15 +176,18 @@ describe('Routes', () => {
     it('should return survey when found', async () => {
       const mockSurvey = {
         _id: 'survey123',
-        title: 'Test Survey',
-        description: 'A test survey',
-        questions: [
-          {
-            id: 'q1',
-            text: 'How are you?',
-            type: 'number'
-          }
-        ]
+        name: 'Test Survey',
+        json: {
+          title: 'Test Survey',
+          description: 'A test survey',
+          questions: [
+            {
+              id: 'q1',
+              text: 'How are you?',
+              type: 'number'
+            }
+          ]
+        }
       };
 
       mockDb.collection('surveys').findOne.mockResolvedValue(mockSurvey);
@@ -193,7 +196,7 @@ describe('Routes', () => {
         .get('/api/surveys/survey123')
         .expect(200);
 
-      expect(response.body).toEqual(mockSurvey);
+      expect(response.body).toEqual(mockSurvey.json);
       expect(mockDb.collection('surveys').findOne).toHaveBeenCalledWith({ _id: 'survey123' });
     });
 

@@ -47,9 +47,9 @@ router.post('/responses', async (req, res) => {
 router.get('/surveys/:id', async (req, res) => {
     const db = getDb();
     try {
-        const survey = await db.collection<{_id: string}>('surveys').findOne({ _id: req.params.id });
+        const survey = await db.collection<{_id: string, json: any}>('surveys').findOne({ _id: req.params.id });
         if (!survey) return res.status(404).json({ error: 'Survey not found' });
-        res.json(survey);
+        res.json(survey.json || {});
     } catch (error: any) {
         res.status(500).json({ error: error.message });
     }

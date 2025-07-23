@@ -48,7 +48,7 @@ describe('SurveyAnalytics', () => {
         it('should throw error for unsupported question type', async () => {
             mockRedisClient.get.mockResolvedValue(null);
             mockCollection.findOne.mockResolvedValue({
-                questions: [{ id: 'question1', type: 'unsupported' }]
+                json: { elements: [{ id: 'question1', type: 'html' }] }
             });
 
             await expect(analytics.getQuestionStats('survey1', 'question1'))
@@ -332,11 +332,13 @@ describe('SurveyAnalytics', () => {
     describe('updateStatsCache', () => {
         it('should clear cache for all questions in survey', async () => {
             const mockSurvey = {
-                questions: [
-                    { id: 'q1' },
-                    { id: 'q2' },
-                    { id: 'q3' }
-                ]
+                json: {
+                    elements: [
+                        { name: 'q1', type: 'text', inputType: 'number' },
+                        { name: 'q2', type: 'text', inputType: 'number' },
+                        { name: 'q3', type: 'text', inputType: 'number' }
+                    ]
+                }
             };
 
             mockCollection.findOne.mockResolvedValue(mockSurvey);

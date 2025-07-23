@@ -1,5 +1,6 @@
 import { Db } from 'mongodb';
 import { calculateMedian, calculateMode, calculatePercentile, calculateRankingStats } from './utils';
+import { SurveyModel } from 'survey-core';
 
 export class SurveyAnalytics {
     constructor(private db: Db, private redisClient: any) {}
@@ -12,21 +13,33 @@ export class SurveyAnalytics {
         const survey = await this.db.collection<{_id: string, [index: string]: any}>('surveys').findOne({ _id: surveyId });
         if (!survey) throw new Error('Survey not found');
         
-        const question = survey.questions.find((q: any) => q.id === questionId);
+        const surveyModel = new SurveyModel(survey.json);
+        const question = surveyModel.getQuestionByName(questionId);
         if (!question) throw new Error('Question not found');
 
+        let questionType = question.getType();
+        if(questionType === 'text') {
+            if (question.inputType === 'date' || question.inputType === 'datetime-local') {
+                questionType = 'date';
+            }
+            else if (question.inputType === 'number') {
+                questionType = 'number';
+            }
+        }
         let stats;
-        switch (question.type) {
+        switch (questionType) {
             case 'number':
                 stats = await this.calculateNumberStats(surveyId, questionId);
                 break;
             case 'date':
                 stats = await this.calculateDateStats(surveyId, questionId);
                 break;
-            case 'single_choice':
+            case 'radiogroup':
+            case 'dropdown':
                 stats = await this.calculateChoiceStats(surveyId, questionId, false);
                 break;
-            case 'multiple_choice':
+            case 'checkbox':
+            case 'tagbox':
                 stats = await this.calculateChoiceStats(surveyId, questionId, true);
                 break;
             case 'rating':
@@ -311,8 +324,9 @@ export class SurveyAnalytics {
         const survey = await this.db.collection<{_id: string, [index: string]: any}>('surveys').findOne({ _id: surveyId });
         if (!survey) return;
 
-        for (const question of survey.questions) {
-            const cacheKey = `stats:${surveyId}:${question.id}`;
+        const surveyModel = new SurveyModel(survey.json);
+        for (const question of surveyModel.getAllQuestions() || []) {
+            const cacheKey = `stats:${surveyId}:${question.name || question.id}`;
             await this.redisClient.del(cacheKey);
         }
     }

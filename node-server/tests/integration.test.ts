@@ -5,18 +5,22 @@ import { createClient } from 'redis';
 // Simple integration test data
 const testSurvey = {
   _id: "test_survey_2023",
-  title: "Test Survey",
-  description: "Test survey for integration testing",
+  name: "Test Survey",
   createdAt: new Date(),
-  questions: [
-    {
-      id: "q1",
-      text: "How many items?",
-      type: "number",
-      min: 0,
-      max: 100
-    }
-  ]
+  json: {
+    title: "Test Survey",
+    description: "Test survey for integration testing",
+    questions: [
+      {
+        name: "q1",
+        title: "How many items?",
+        type: "text",
+        inputType: "number",
+        min: 0,
+        max: 100
+      }
+    ]
+  }
 };
 
 const testResponses = [
