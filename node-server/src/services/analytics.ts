@@ -281,7 +281,7 @@ export class SurveyAnalytics {
         // Calculate sentiment if NLP data is available
         let sentimentAnalysis = null;
         if (nlpData.length > 0) {
-            const sentiments = nlpData.map(nlp => nlp.sentiment || 0);
+            const sentiments = nlpData.map(nlp => nlp.sentiment || { polarity: 0 });
             sentimentAnalysis = {
                 average: sentiments.reduce((sum, s) => sum + s.polarity, 0) / sentiments.length,
                 positive: sentiments.filter(s => s.polarity > 0.1).length,

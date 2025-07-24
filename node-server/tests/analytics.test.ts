@@ -282,8 +282,8 @@ describe('SurveyAnalytics', () => {
     describe('calculateTextStats', () => {
         it('should calculate text statistics correctly', async () => {
             const mockResponses = [
-                { value: 'This is a test response', nlp: { sentiment: 0.5 } },
-                { value: 'Another test response here', nlp: { sentiment: -0.2 } },
+                { value: 'This is a test response', nlp: { sentiment: { polarity: 0.5 } } },
+                { value: 'Another test response here', nlp: { sentiment: { polarity: -0.2 } } },
                 { value: 'Short', nlp: null } // Too short, no NLP data
             ];
 

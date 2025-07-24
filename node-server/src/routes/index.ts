@@ -29,7 +29,7 @@ router.post("/post", async (req, res) => {
         storage.postResults(postId, result, async (storedResult: any) => {
             await surveyAnalytics.processTextResponses(storedResult).catch(console.error);
             surveyAnalytics.updateStatsCache(postId).catch(console.error);
-            res.status(201).json({ ...storedResult, id: storedResult.insertedId });
+            res.status(201).json({ ...storedResult });
         });
     } catch (error: any) {
         res.status(500).json({ error: error.message });

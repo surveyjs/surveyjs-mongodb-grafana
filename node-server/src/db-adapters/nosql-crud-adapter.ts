@@ -47,7 +47,7 @@ export class NoSqlCrudAdapter<DbType extends Db> implements ICRUDAdapter {
     this.dbConnectFunction((db: DbType, finalizeCallback: any) => {
       db.collection(collectionName).insertOne(object)
         .then((results: any) => {
-          callback(object.id);
+          callback(results.id);
           finalizeCallback(results);
         })
         .catch(() => {
