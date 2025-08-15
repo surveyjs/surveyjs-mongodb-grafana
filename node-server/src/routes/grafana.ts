@@ -22,12 +22,12 @@ router.post("/search", async (req, res) => {
   try {
     const { query } = req.body;
     
-    // Example search logic, modify as needed
-    if (query === 'response_count' || query === 'table_data') {
-      return res.json([query]);
+    if(!query.surveyId) {
+      const surveys = await db.collection<{_id: string, name?: string, json: any}>('surveys').find({}).sort({ _id: 1 }).toArray();
+      return res.json(surveys.map(s => ({ label: s.json?.title || s.name, value: s.json?.id || s._id })));
     }
     
-    const survey = await db.collection<{_id: string, json: any}>('surveys').findOne({ _id: query.surveyId || "burger_survey_2023" });
+    const survey = await db.collection<{_id: string, json: any}>('surveys').findOne({ _id: query.surveyId });
     if (!survey) {
       return res.status(404).json({ error: 'Survey not found' });
     }
