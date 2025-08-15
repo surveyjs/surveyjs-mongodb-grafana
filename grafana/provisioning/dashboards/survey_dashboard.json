@@ -18,6 +18,7 @@
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
+          "surveyId": "burger_survey_2023",
           "refId": "A"
         }
       ],
@@ -82,6 +83,7 @@
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
+          "surveyId": "burger_survey_2023",
           "questionId": "q5",
           "refId": "A"
         }
@@ -106,6 +108,7 @@
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
+          "surveyId": "burger_survey_2023",
           "questionId": "q3",
           "refId": "A"
         }
@@ -144,6 +147,7 @@
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
+          "surveyId": "burger_survey_2023",
           "questionId": "q6",
           "refId": "A"
         }
@@ -168,6 +172,7 @@
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
+          "surveyId": "burger_survey_2023",
           "questionId": "q4",
           "refId": "A"
         }
@@ -207,6 +212,7 @@
             "uid": "P35291074DEBCE0FA"
           },
           "queryText": "values",
+          "surveyId": "burger_survey_2023",
           "questionId": "q5",
           "refId": "A"
         }
@@ -241,6 +247,7 @@
           },
           "hide": false,
           "queryText": "values",
+          "surveyId": "burger_survey_2023",
           "questionId": "q2",
           "refId": "A"
         }

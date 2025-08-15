@@ -8,28 +8,6 @@ datasources:
     isDefault: true
     editable: true
 
-  - name: MongoDB Official
-    type: grafana-mongodb-datasource
-    access: proxy
-    basicAuth: false
-    editable: true
-    enabled: true
-    jsonData:
-      connection: mongodb://admin:securepassword@mongodb:27017/survey_db
-      user: admin
-    secureJsonData:
-      password: securepassword
-
-  - name: MongoDB Community
-    type: marcusolsson-mongodb-datasource
-    url: mongodb://admin:securepassword@mongodb:27017
-    database: survey_db
-    jsonData:
-      authSource: survey_db
-      tlsAuth: false
-    secureJsonData:
-      password: securepassword
-
   - name: SurveyJS
     type: surveyjs-grafana-datasource
     access: proxy
@@ -40,6 +18,5 @@ datasources:
     jsonData:
       url: http://node-server:3000/grafana
       path: ""
-      surveyId: "burger_survey_2023"
     secureJsonData:
       apiKey: "your_api_key_here"
