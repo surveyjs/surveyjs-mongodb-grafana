@@ -342,12 +342,25 @@ describe('Grafana Routes', () => {
     expect(res.body.routes).toHaveProperty('query');
   });
 
-  it('POST /grafana/search returns canned response for response_count', async () => {
+  it('POST /grafana/search returns surveys list', async () => {
+    // Mock some surveys in the db
+    const mockSurveys = [
+      { _id: 'id1', name: 'Survey 1', json: { title: 'Survey 1', id: 'id1' } },
+      { _id: 'id2', name: 'Survey 2', json: { title: 'Survey 2', id: 'id2' } }
+    ];
+    mockDb.collection('surveys').find = jest.fn().mockReturnValue({
+      sort: jest.fn().mockReturnValue({
+        toArray: jest.fn().mockResolvedValue(mockSurveys)
+      })
+    });
     const res = await request(app)
       .post('/grafana/search')
-      .send({ query: 'response_count' })
+      .send({ query: 'anything' })
       .expect(200);
-    expect(res.body).toEqual(['response_count']);
+    expect(res.body).toEqual([
+      { label: 'Survey 1', value: 'id1' },
+      { label: 'Survey 2', value: 'id2' }
+    ]);
   });
 
   it('POST /grafana/search returns 404 for missing survey', async () => {

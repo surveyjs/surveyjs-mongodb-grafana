@@ -1,4 +1,4 @@
-import { SurveyAnalytics } from '../src/services/analytics';
+import { SurveyAnalyticsInMemory } from '../src/services/analytics-in-memory';
 import { MongoClient, Db } from 'mongodb';
 import { createClient } from 'redis';
 
@@ -93,7 +93,7 @@ describe('SurveyAnalytics Integration Tests', () => {
       };
     }
 
-    analytics = new SurveyAnalytics(db, redisClient);
+    analytics = new SurveyAnalyticsInMemory(db, redisClient);
   });
 
   afterAll(async () => {

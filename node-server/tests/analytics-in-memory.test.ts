@@ -1,4 +1,5 @@
 import { SurveyAnalytics } from '../src/services/analytics';
+import { SurveyAnalyticsInMemory } from '../src/services/analytics-in-memory';
 import { Db } from 'mongodb';
 
 // Mock MongoDB
@@ -31,7 +32,7 @@ describe('SurveyAnalytics', () => {
 
     beforeEach(() => {
         jest.clearAllMocks();
-        analytics = new SurveyAnalytics(mockDb, mockRedisClient);
+        analytics = new SurveyAnalyticsInMemory(mockDb, mockRedisClient);
     });
 
     describe('getQuestionStats', () => {
