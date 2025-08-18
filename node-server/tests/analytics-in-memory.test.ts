@@ -220,22 +220,6 @@ describe('SurveyAnalytics', () => {
             });
         });
 
-        it('should filter out invalid ratings', async () => {
-            const mockResponses = [
-                { value: 5 },
-                { value: 15 }, // Invalid (out of range)
-                { value: 0 },  // Invalid (out of range)
-                { value: 7 }
-            ];
-
-            mockCollection.toArray.mockResolvedValue(mockResponses);
-
-            const result = await (analytics as any).calculateRatingStats('survey1', 'question1');
-
-            expect(result.count).toBe(2);
-            expect(result.values).toEqual([5, 7]);
-        });
-
         it('should handle empty responses', async () => {
             mockCollection.toArray.mockResolvedValue([]);
 

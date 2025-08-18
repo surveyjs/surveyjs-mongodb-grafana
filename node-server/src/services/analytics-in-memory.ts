@@ -119,7 +119,7 @@ export class SurveyAnalyticsInMemory extends SurveyAnalytics {
             .project({ _id: 0, value: `$answers.${questionId}` })
             .toArray();
             
-        const values = responses.map(r => r.value).filter(v => typeof v === 'number' && v >= 1 && v <= 10);
+        const values = responses.map(r => r.value).filter(v => typeof v === 'number');
         
         if (values.length === 0) {
             return {

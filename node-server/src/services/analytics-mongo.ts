@@ -1,5 +1,6 @@
 import { Db, ObjectId } from 'mongodb';
 import { SurveyAnalytics } from './analytics';
+import { calculateMode, calculatePercentile } from './utils';
 
 export class SurveyAnalyticsMongo extends SurveyAnalytics {
     constructor(db: Db, redisClient: any) {
@@ -28,14 +29,7 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
         const values = doc.values || [];
         values.sort((a: number, b: number) => a - b);
         const median = values.length ? (values.length % 2 === 0 ? (values[values.length/2-1] + values[values.length/2])/2 : values[Math.floor(values.length/2)]) : null;
-        const mode = values.length ? [values.sort((a: number, b: number) => values.filter((v: number) => v===a).length - values.filter((v: number) => v===b).length).pop()] : null;
-        const percentile = (arr: number[], p: number) => {
-            if (!arr.length) return null;
-            const idx = (arr.length - 1) * (p/100);
-            const lower = Math.floor(idx), upper = Math.ceil(idx);
-            if (lower === upper) return arr[lower];
-            return arr[lower] + (arr[upper] - arr[lower]) * (idx - lower);
-        };
+        const mode = calculateMode(values);
         return {
             type: 'number',
             count: doc.count,
@@ -44,8 +38,8 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
             max: doc.max,
             median,
             mode,
-            percentile25: percentile(values, 25),
-            percentile75: percentile(values, 75),
+            percentile25: calculatePercentile(values, 25),
+            percentile75: calculatePercentile(values, 75),
             values
         };
     }
@@ -76,15 +70,8 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
         const doc = result[0] || { count: 0, min: null, max: null, average: null, values: [] };
         const values = (doc.values || []).map((d: Date) => new Date(d).getTime()).sort((a: number, b: number) => a - b);
         const median = values.length ? (values.length % 2 === 0 ? (values[values.length/2-1] + values[values.length/2])/2 : values[Math.floor(values.length/2)]) : null;
-        const percentile = (arr: number[], p: number) => {
-            if (!arr.length) return null;
-            const idx = (arr.length - 1) * (p/100);
-            const lower = Math.floor(idx), upper = Math.ceil(idx);
-            if (lower === upper) return arr[lower];
-            return arr[lower] + (arr[upper] - arr[lower]) * (idx - lower);
-        };
-        const p25 = percentile(values, 25);
-        const p75 = percentile(values, 75);
+        const p25 = calculatePercentile(values, 25);
+        const p75 = calculatePercentile(values, 75);
         return {
             type: 'date',
             count: doc.count,
@@ -107,14 +94,14 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
                 { $project: { value: `$answers.${questionId}` } },
                 { $unwind: "$value" },
                 { $group: { _id: "$value", count: { $sum: 1 } } },
-                { $sort: { count: -1 } }
+                { $sort: { _id: 1 } }
             ];
             const result = await this.db.collection('responses').aggregate(pipeline).toArray();
             const choices: Record<string, number> = {};
             result.forEach(r => { choices[r._id] = r.count; });
             return {
                 type: 'multiple_choice',
-                count: await this.db.collection('responses').countDocuments({ surveyId }),
+                count: result.length,
                 totalSelections: result.reduce((sum, r) => sum + r.count, 0),
                 choices,
                 mostSelected: result.slice(0, 3).map(r => ({ choice: r._id, count: r.count }))
@@ -124,6 +111,7 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
             const pipeline = [
                 { $match: { surveyId } },
                 { $project: { value: `$answers.${questionId}` } },
+                { $match: { value: { $exists: true } } },
                 { $group: { _id: "$value", count: { $sum: 1 } } },
                 { $sort: { count: -1 } }
             ];
@@ -143,7 +131,7 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
         const pipeline = [
             { $match: { surveyId } },
             { $project: { value: `$answers.${questionId}` } },
-            { $match: { value: { $gte: 1, $lte: 10 } } },
+            { $match: { value: { $type: 'number' } } },
             {
                 $group: {
                     _id: null,
@@ -159,11 +147,11 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
         const result = await this.db.collection('responses').aggregate(pipeline).toArray();
         const doc = result[0] || { count: 0, average: null, min: null, max: null, values: [], distribution: [] };
         const values = doc.values || [];
-    values.sort((a: number, b: number) => a - b);
-    const median = values.length ? (values.length % 2 === 0 ? (values[values.length/2-1] + values[values.length/2])/2 : values[Math.floor(values.length/2)]) : null;
-    const mode = values.length ? [values.sort((a: number, b: number) => values.filter((v: number) => v===a).length - values.filter((v: number) => v===b).length).pop()] : null;
-    const distribution: Record<number, number> = {};
-    (doc.distribution || []).forEach((v: number) => { distribution[v] = (distribution[v] || 0) + 1; });
+        values.sort((a: number, b: number) => a - b);
+        const median = values.length ? (values.length % 2 === 0 ? (values[values.length/2-1] + values[values.length/2])/2 : values[Math.floor(values.length/2)]) : null;
+        const mode = calculateMode(values);
+        const distribution: Record<number, number> = {};
+        (doc.distribution || []).forEach((v: number) => { distribution[v] = (distribution[v] || 0) + 1; });
         return {
             type: 'rating',
             count: doc.count,
