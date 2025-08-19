@@ -1,8 +1,9 @@
 // node-server/src/routes/grafanaRoutes.ts
 import { Router } from 'express';
 import { getDb, getRedisClient } from '../db';
-import { SurveyAnalytics } from '../services/analytics';
 import { SurveyModel } from 'survey-core';
+import { SurveyAnalyticsInMemory } from '../services/analytics-in-memory';
+import { SurveyAnalyticsMongo } from '../services/analytics-mongo';
 
 export const router = Router();
 
@@ -42,7 +43,7 @@ router.post("/search", async (req, res) => {
 router.post("/query", async (req, res) => {
   const db = getDb();
   const redisClient = getRedisClient();
-  const surveyAnalytics = new SurveyAnalytics(db, redisClient);
+  const surveyAnalytics = new SurveyAnalyticsMongo(db, redisClient);
   try {
     const { targets, range } = req.body;
     const from = new Date(range.from).getTime();
