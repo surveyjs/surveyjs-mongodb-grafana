@@ -4,8 +4,8 @@ import { SurveyModel } from 'survey-core';
 export class SurveyAnalytics {
     constructor(protected db: Db, private redisClient: any) {}
 
-    async getQuestionStats(surveyId: string, questionId: string): Promise<any> {
-        const cacheKey = `stats:${surveyId}:${questionId}`;
+    async getQuestionStats(surveyId: string, questionId: string, additional: any): Promise<any> {
+        const cacheKey = `stats:${surveyId}:${questionId}:${additional || ''}`;
         const cached = await this.redisClient.get(cacheKey);
         if (cached) return JSON.parse(cached);
 
@@ -31,7 +31,13 @@ export class SurveyAnalytics {
                 stats = await this.calculateNumberStats(surveyId, questionId);
                 break;
             case 'date':
-                stats = await this.calculateDateStats(surveyId, questionId);
+                additional = parseInt(additional);
+                if(typeof additional === 'number') {
+                    stats = await this.calculateMonthlyStats(surveyId, questionId, additional);
+                }
+                else {
+                    stats = await this.calculateDateStats(surveyId, questionId);
+                }
                 break;
             case 'radiogroup':
             case 'dropdown':
@@ -80,6 +86,10 @@ export class SurveyAnalytics {
     }
 
     protected async calculateTextStats(surveyId: string, questionId: string): Promise<{ type: string; count: number; averageLength: number; minLength: number; maxLength: number; medianLength: number; sentimentAnalysis: { average: number; positive: number; negative: number; neutral: number; } | null; commonWords: Array<any>; values: Array<string>; }> {
+        throw new Error('Method not implemented.');
+    }
+
+    protected async calculateMonthlyStats(surveyId: string, questionId: string, year: number): Promise<{ type: string; count: any; values: any }> {
         throw new Error('Method not implemented.');
     }
 

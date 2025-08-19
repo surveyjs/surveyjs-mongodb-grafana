@@ -265,4 +265,116 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
             values: values.slice(0, 10)
         };
     }
+
+    protected async calculateMonthlyStats(surveyId: string, questionId: string, year: number) {
+        const pipeline = [
+            // Step 1: Filter relevant documents
+            {
+                $match: {
+                    surveyId: surveyId,
+                    [`answers.${questionId}`]: { $exists: true, $type: "date" }
+                }
+            },
+            // Step 2: Extract year and month
+            {
+                $addFields: {
+                    eventYear: { $year: `$answers.${questionId}` },
+                    eventMonth: { $month: `$answers.${questionId}` }
+                }
+            },
+            // Step 3: Filter by target year (replace 2023 with your year)
+            {
+                $match: { eventYear: year }
+            },
+            // Step 4: Group by month to get counts
+            {
+                $group: {
+                    _id: "$eventMonth",
+                    count: { $sum: 1 }
+                }
+            },
+            // Step 5: Create template with all 12 months
+            {
+                $group: {
+                    _id: null,
+                    monthlyData: { $push: { month: "$_id", count: "$count" } },
+                    allMonths: { $first: { $range: [1, 13] } }
+                }
+            },
+            // Step 6: Project to merge template with actual counts
+            {
+                $project: {
+                months: {
+                    $map: {
+                    input: "$allMonths",
+                    as: "m",
+                    in: {
+                        month: "$$m",
+                        count: {
+                        $ifNull: [
+                            {
+                            $let: {
+                                vars: {
+                                found: {
+                                    $arrayElemAt: [
+                                    {
+                                        $filter: {
+                                        input: "$monthlyData",
+                                        cond: { $eq: ["$$this.month", "$$m"] }
+                                        }
+                                    },
+                                    0
+                                    ]
+                                }
+                                },
+                                in: "$$found.count"
+                            }
+                            },
+                            0
+                        ]
+                        }
+                    }
+                    }
+                }
+                }
+            },
+            // Step 7: Unwind and format output
+            { $unwind: "$months" },
+            { $replaceRoot: { newRoot: "$months" } },
+            { $sort: { month: 1 } },
+            {
+                $project: {
+                    label: {
+                        $switch: {
+                            branches: [
+                            { case: { $eq: ["$month", 1] }, then: "January" },
+                            { case: { $eq: ["$month", 2] }, then: "February" },
+                            { case: { $eq: ["$month", 3] }, then: "March" },
+                            { case: { $eq: ["$month", 4] }, then: "April" },
+                            { case: { $eq: ["$month", 5] }, then: "May" },
+                            { case: { $eq: ["$month", 6] }, then: "June" },
+                            { case: { $eq: ["$month", 7] }, then: "July" },
+                            { case: { $eq: ["$month", 8] }, then: "August" },
+                            { case: { $eq: ["$month", 9] }, then: "September" },
+                            { case: { $eq: ["$month", 10] }, then: "October" },
+                            { case: { $eq: ["$month", 11] }, then: "November" },
+                            { case: { $eq: ["$month", 12] }, then: "December" }
+                            ],
+                            default: "Unknown"
+                        }
+                    },
+                    month: 2,
+                    count: 1
+                }
+            }  
+        ];
+        const result = await this.db.collection('responses').aggregate(pipeline).toArray();
+
+        return {
+            type: 'histogram',
+            count: result.length,
+            values: result
+        };
+    }
+
 }

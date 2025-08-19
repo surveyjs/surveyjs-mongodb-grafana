@@ -101,6 +101,17 @@ export class DataSource extends DataSourceApi<SurveyJSQuery, SurveyJSDataSourceO
             preferredVisualisationType: 'table',
           },         
         });      
+      } else if(targetData.type === 'histogram') {
+        return new MutableDataFrame({
+          fields: [
+            { name: "Choice", type: FieldType.string, values: targetData.values.map((v: any) => v.label) },
+            { name: "Count", type: FieldType.number, values: targetData.values.map((v: any) => v.count) }
+          ],
+          refId: query.refId,
+          meta: {
+            preferredVisualisationType: 'graph',
+          },         
+        });      
       } else if(targetData.type === 'ranking') {
         return new MutableDataFrame({
           fields: [

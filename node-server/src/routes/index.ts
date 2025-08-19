@@ -11,7 +11,7 @@ router.get('/stats/:surveyId/:questionId', async (req, res) => {
     const surveyAnalytics = new SurveyAnalyticsInMemory(db, redisClient);
     try {
         const { surveyId, questionId } = req.params;
-        const stats = await surveyAnalytics.getQuestionStats(surveyId, questionId);
+        const stats = await surveyAnalytics.getQuestionStats(surveyId, questionId, null);
         res.json(stats);
     } catch (error: any) {
         res.status(500).json({ error: error.message });

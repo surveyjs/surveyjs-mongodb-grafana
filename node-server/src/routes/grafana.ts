@@ -61,7 +61,7 @@ router.post("/query", async (req, res) => {
               count: totalCount
             }
           }
-          const stats = await surveyAnalytics.getQuestionStats(target.surveyId, target.questionId);
+          const stats = await surveyAnalytics.getQuestionStats(target.surveyId, target.questionId, target.queryText);
           return stats;
       }
       // Example test data, modify as needed
