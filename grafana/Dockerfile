@@ -4,6 +4,7 @@ USER root
 
 RUN grafana-cli plugins install grafana-mongodb-datasource
 RUN grafana-cli plugins install yesoreyeram-infinity-datasource
+RUN grafana-cli plugins install grafana-simple-json-datasource
 # RUN grafana-cli plugins install marcusolsson-mongodb-datasource
 
 USER grafana
