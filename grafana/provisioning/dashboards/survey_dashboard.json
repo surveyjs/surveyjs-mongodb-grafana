@@ -225,16 +225,8 @@
         "type": "surveyjs-grafana-datasource",
         "uid": "P35291074DEBCE0FA"
       },
-      "fieldConfig": {
-        "defaults": {
-          "unit": "dateTimeAsLocal"
-        }
-      },
-      "options": {
-        "bucketSize": 2592000000
-      },      
       "gridPos": {
-        "h": 10,
+        "h": 11,
         "w": 17,
         "x": 0,
         "y": 21
@@ -245,15 +237,14 @@
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
-          "hide": false,
-          "queryText": "values",
-          "surveyId": "burger_survey_2023",
+          "queryText": "2023",
           "questionId": "q2",
-          "refId": "A"
+          "refId": "A",
+          "surveyId": "burger_survey_2023"
         }
       ],
       "title": "Burgers Per Month Distribution",
-      "type": "histogram"
+      "type": "barchart"
     }
   ]
 }
