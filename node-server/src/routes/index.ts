@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { SurveyAnalytics } from '../services/analytics';
 import { getDb, getRedisClient } from '../db';
 import { MongoStorage } from '../db-adapters/mongo';
+import { SurveyAnalyticsInMemory } from '../services/analytics-in-memory';
 
 export const router = Router();
 
 router.get('/stats/:surveyId/:questionId', async (req, res) => {
     const db = getDb();
     const redisClient = getRedisClient();
-    const surveyAnalytics = new SurveyAnalytics(db, redisClient);
+    const surveyAnalytics = new SurveyAnalyticsInMemory(db, redisClient);
     try {
         const { surveyId, questionId } = req.params;
         const stats = await surveyAnalytics.getQuestionStats(surveyId, questionId);
@@ -21,7 +21,7 @@ router.get('/stats/:surveyId/:questionId', async (req, res) => {
 router.post("/post", async (req, res) => {
     const db = getDb();
     const redisClient = getRedisClient();
-    const surveyAnalytics = new SurveyAnalytics(db, redisClient);
+    const surveyAnalytics = new SurveyAnalyticsInMemory(db, redisClient);
     try {
         const storage = new MongoStorage(db);
         const postId = req.body.postId;
@@ -39,7 +39,7 @@ router.post("/post", async (req, res) => {
 // router.post('/responses', async (req, res) => {
 //     const db = getDb();
 //     const redisClient = getRedisClient();
-//     const surveyAnalytics = new SurveyAnalytics(db, redisClient);
+//     const surveyAnalytics = new SurveyAnalyticsInMemory(db, redisClient);
 //     try {
 //         const response = req.body;
 //         const result = await db.collection('responses').insertOne(response);
