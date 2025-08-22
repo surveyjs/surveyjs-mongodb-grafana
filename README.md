@@ -27,5 +27,5 @@ docker compose up -d
 Not that NLP server needs to download and build sentiment analyis model and build it. nlp-service container build can take ~5 minutes
 
 Two sites are available after docker starts:
-http://localhost:3000/ - simple surveyjs backend: surveys list, run survey, display results in table form
-http://localhost:3001/ - grafana dashboard server site: login/password - admin/grafana
+ - http://localhost:3000/ - simple surveyjs backend: surveys list, run survey, display results in table form
+ - http://localhost:3001/ - grafana dashboard server site: login/password - admin/grafana
