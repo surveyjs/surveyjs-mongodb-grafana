@@ -25,7 +25,7 @@ The system consists of four main components working together:
 ┌─────────────────┐     ┌─────────────────┐            ┌─────────────────┐   
 │   SurveyJS      │     │   Node.js       │            │   Grafana       │   
 │   Frontend      │───▶│   Backend       │──────────▶ │   Plugin        │   
-│   (External)    │     │   (Port 3000)   │            └─────────────────┘   
+│           │     │   (Port 3000)   │            └─────────────────┘   
 └─────────────────┘     └─────────────────┘                  │   
                                │                             ▼
                                ▼                       ┌─────────────────┐
