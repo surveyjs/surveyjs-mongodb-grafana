@@ -19,11 +19,21 @@ app.use(express.json());
 app.use(apiBaseAddress, router);
 app.use(grafanaBaseAddress, grafana);
 
+/**
+ * Creates and returns a MongoDB-based survey storage instance
+ * @param req - Express request object (unused but kept for consistency)
+ * @returns SurveyStorage instance configured for MongoDB
+ */
 function getStorage(req: any): SurveyStorage {
   const storage = new MongoStorage(getDb());
   return storage;
 }
 
+/**
+ * Sends a JSON response to the client
+ * @param res - Express response object
+ * @param obj - Object to send as JSON response
+ */
 function sendJsonResult(res: any, obj: any) {
   res.json(obj);
 }
@@ -91,6 +101,12 @@ app.get(["/", "/about", "/run/*", "/edit/*", "/results/*"], (_, res) => {
 
 app.use(express.static(__dirname + "/../public"));
 
+/**
+ * Creates a Redis caching middleware for Express routes
+ * @param key - Redis cache key to use for storing/retrieving data
+ * @param ttl - Time to live in seconds (default: 300)
+ * @returns Express middleware function that checks cache before proceeding
+ */
 const cacheMiddleware = (key: string, ttl: number = 300) => {
   return async (req: any, res: any, next: any) => {
     try {
@@ -107,6 +123,11 @@ const cacheMiddleware = (key: string, ttl: number = 300) => {
   };
 };
 
+/**
+ * Initializes and starts the Express server with database connections
+ * Connects to MongoDB and Redis, then starts the HTTP server
+ * Handles connection errors gracefully with logging
+ */
 const startServer = async () => {
   await connectToDatabase(process.env.MONGO_URI!)
       .then(() => console.log('Connected to MongoDB'))

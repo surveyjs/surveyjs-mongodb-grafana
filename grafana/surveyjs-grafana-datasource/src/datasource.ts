@@ -13,7 +13,16 @@ import { getBackendSrv } from '@grafana/runtime';
 
 import { SurveyJSQuery, SurveyJSDataSourceOptions, defaultQuery } from './types';
 
+/**
+ * SurveyJS Grafana Data Source implementation
+ * Handles communication with SurveyJS backend and data transformation for Grafana
+ */
 export class DataSource extends DataSourceApi<SurveyJSQuery, SurveyJSDataSourceOptions> {
+  /**
+   * Retrieves available surveys or questions for dropdown selection
+   * @param surveyId - Optional survey ID to get questions for that survey
+   * @returns Promise resolving to array of selectable options for dropdowns
+   */
   async getOptions(surveyId?: string): Promise<SelectableValue[]> {
     const response = await this.doRequest({
       url: '/search',
@@ -32,6 +41,11 @@ export class DataSource extends DataSourceApi<SurveyJSQuery, SurveyJSDataSourceO
     }));
   }
 
+  /**
+   * Makes HTTP requests to the SurveyJS backend service
+   * @param options - Request options including URL, method, and data
+   * @returns Promise resolving to the response from the backend service
+   */
   async doRequest(options: any): Promise<any> {
     options.withCredentials = this._instanceSettings.withCredentials;
     options.headers = {'Content-Type': 'application/json'};
@@ -43,11 +57,21 @@ export class DataSource extends DataSourceApi<SurveyJSQuery, SurveyJSDataSourceO
   }
 
   private _instanceSettings: DataSourceInstanceSettings<SurveyJSDataSourceOptions>;
+  
+  /**
+   * Creates a new SurveyJS DataSource instance
+   * @param instanceSettings - Grafana data source configuration settings
+   */
   constructor(instanceSettings: DataSourceInstanceSettings<SurveyJSDataSourceOptions>) {
     super(instanceSettings);
     this._instanceSettings = instanceSettings;
   }
 
+  /**
+   * Executes queries and transforms survey data into Grafana data frames
+   * @param options - Query request containing targets and time range
+   * @returns Promise resolving to Grafana data query response with data frames
+   */
   async query(options: DataQueryRequest<SurveyJSQuery>): Promise<DataQueryResponse> {
     const response = await this.doRequest({
       url: '/query',
@@ -180,6 +204,10 @@ export class DataSource extends DataSourceApi<SurveyJSQuery, SurveyJSDataSourceO
     return { data };
   }
 
+  /**
+   * Tests the connection to the SurveyJS backend service
+   * @returns Promise resolving to test result with status and message
+   */
   async testDatasource() {
     // Implement a health check for your data source.
     const test = await this.doRequest({

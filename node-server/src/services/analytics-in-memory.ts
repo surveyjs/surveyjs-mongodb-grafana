@@ -2,11 +2,27 @@ import { Db } from 'mongodb';
 import { calculateMedian, calculateMode, calculatePercentile, calculateRankingStats } from './utils';
 import { SurveyAnalytics } from './analytics';
 
+/**
+ * In-memory analytics implementation for survey data
+ * Processes data by loading responses into memory and performing calculations
+ * Optimized for smaller datasets with fast processing
+ */
 export class SurveyAnalyticsInMemory extends SurveyAnalytics {
+    /**
+     * Creates a new SurveyAnalyticsInMemory instance
+     * @param db - MongoDB database instance
+     * @param redisClient - Redis client for caching
+     */
     constructor(db: Db, redisClient: any) {
         super(db, redisClient);
     }
 
+    /**
+     * Calculates numeric statistics by loading all responses into memory
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to comprehensive numeric statistics
+     */
     protected async calculateNumberStats(surveyId: string, questionId: string) {
         const responses = await this.db.collection('responses')
             .find({ surveyId })
@@ -29,6 +45,12 @@ export class SurveyAnalyticsInMemory extends SurveyAnalytics {
         };
     }
 
+    /**
+     * Calculates date statistics by loading all responses into memory
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to comprehensive date statistics
+     */
     protected async calculateDateStats(surveyId: string, questionId: string) {
         const responses = await this.db.collection('responses')
             .find({ surveyId })
@@ -68,6 +90,13 @@ export class SurveyAnalyticsInMemory extends SurveyAnalytics {
         };
     }
 
+    /**
+     * Calculates choice statistics by loading all responses into memory
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @param isMultiple - Whether the question allows multiple selections
+     * @returns Promise resolving to choice statistics with popularity metrics
+     */
     protected async calculateChoiceStats(surveyId: string, questionId: string, isMultiple: boolean) {
         const responses = await this.db.collection('responses')
             .find({ surveyId })
@@ -113,6 +142,12 @@ export class SurveyAnalyticsInMemory extends SurveyAnalytics {
         }
     }
 
+    /**
+     * Calculates rating statistics by loading all responses into memory
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to rating statistics with distribution
+     */
     protected async calculateRatingStats(surveyId: string, questionId: string) {
         const responses = await this.db.collection('responses')
             .find({ surveyId })
@@ -153,6 +188,12 @@ export class SurveyAnalyticsInMemory extends SurveyAnalytics {
         };
     }
 
+    /**
+     * Calculates ranking statistics by loading all responses into memory
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to ranking statistics with preferences
+     */
     protected async calculateRankingStats(surveyId: string, questionId: string) {
         const responses = await this.db.collection('responses')
             .find({ surveyId })
@@ -200,6 +241,12 @@ export class SurveyAnalyticsInMemory extends SurveyAnalytics {
         };
     }
 
+    /**
+     * Calculates text statistics including NLP analysis by loading responses into memory
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to text statistics with sentiment and word analysis
+     */
     protected async calculateTextStats(surveyId: string, questionId: string) {
         const responses = await this.db.collection('responses')
             .find({ surveyId })

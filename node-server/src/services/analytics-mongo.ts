@@ -2,11 +2,27 @@ import { Db, ObjectId } from 'mongodb';
 import { SurveyAnalytics } from './analytics';
 import { calculateMode, calculatePercentile } from './utils';
 
+/**
+ * MongoDB aggregation-based analytics implementation for survey data
+ * Uses MongoDB aggregation pipelines for efficient processing of large datasets
+ * Optimized for performance with database-level calculations
+ */
 export class SurveyAnalyticsMongo extends SurveyAnalytics {
+    /**
+     * Creates a new SurveyAnalyticsMongo instance
+     * @param db - MongoDB database instance
+     * @param redisClient - Redis client for caching
+     */
     constructor(db: Db, redisClient: any) {
         super(db, redisClient);
     }
 
+    /**
+     * Calculates numeric statistics using MongoDB aggregation pipeline
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to comprehensive numeric statistics
+     */
     protected async calculateNumberStats(surveyId: string, questionId: string) {
         const pipeline = [
             { $match: { surveyId } },
@@ -44,6 +60,12 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
         };
     }
 
+    /**
+     * Calculates date statistics using MongoDB aggregation pipeline
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to comprehensive date statistics
+     */
     protected async calculateDateStats(surveyId: string, questionId: string) {
         const pipeline = [
             { $match: { surveyId } },
@@ -86,6 +108,13 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
         };
     }
 
+    /**
+     * Calculates choice statistics using MongoDB aggregation pipeline
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @param isMultiple - Whether the question allows multiple selections
+     * @returns Promise resolving to choice statistics with popularity metrics
+     */
     protected async calculateChoiceStats(surveyId: string, questionId: string, isMultiple: boolean) {
         if (isMultiple) {
             // Flatten arrays and count
@@ -127,6 +156,12 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
         }
     }
 
+    /**
+     * Calculates rating statistics using MongoDB aggregation pipeline
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to rating statistics with distribution
+     */
     protected async calculateRatingStats(surveyId: string, questionId: string) {
         const pipeline = [
             { $match: { surveyId } },
@@ -165,6 +200,12 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
         };
     }
 
+    /**
+     * Calculates ranking statistics (falls back to in-memory processing)
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to ranking statistics with preferences
+     */
     protected async calculateRankingStats(surveyId: string, questionId: string) {
         // Not efficient in Mongo, fallback to in-memory for now
         const responses = await this.db.collection('responses')
@@ -209,6 +250,12 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
         };
     }
 
+    /**
+     * Calculates text statistics including NLP analysis (falls back to in-memory processing)
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to text statistics with sentiment and word analysis
+     */
     protected async calculateTextStats(surveyId: string, questionId: string) {
         // Not efficient in Mongo, fallback to in-memory for now
         const responses = await this.db.collection('responses')
@@ -266,6 +313,13 @@ export class SurveyAnalyticsMongo extends SurveyAnalytics {
         };
     }
 
+    /**
+     * Calculates monthly statistics for date questions using complex MongoDB aggregation
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @param year - Year to analyze
+     * @returns Promise resolving to monthly statistics with counts per month
+     */
     protected async calculateMonthlyStats(surveyId: string, questionId: string, year: number) {
         const pipeline = [
             // Step 1: Filter relevant documents

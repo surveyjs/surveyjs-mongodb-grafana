@@ -1,9 +1,26 @@
 import { Db } from 'mongodb';
 import { SurveyModel } from 'survey-core';
 
+/**
+ * Base class for survey analytics providing common functionality
+ * Handles caching, question type detection, and NLP integration
+ */
 export class SurveyAnalytics {
+    /**
+     * Creates a new SurveyAnalytics instance
+     * @param db - MongoDB database instance
+     * @param redisClient - Redis client for caching
+     */
     constructor(protected db: Db, private redisClient: any) {}
 
+    /**
+     * Retrieves comprehensive statistics for a specific survey question
+     * @param surveyId - Unique identifier for the survey
+     * @param questionId - Unique identifier for the question
+     * @param additional - Additional parameters (e.g., year for date questions)
+     * @returns Promise resolving to question statistics object
+     * @throws Error if survey or question not found
+     */
     async getQuestionStats(surveyId: string, questionId: string, additional: any): Promise<any> {
         const cacheKey = `stats:${surveyId}:${questionId}:${additional || ''}`;
         const cached = await this.redisClient.get(cacheKey);
@@ -65,34 +82,82 @@ export class SurveyAnalytics {
         return stats;
     }
 
+    /**
+     * Calculates statistics for numeric questions
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to numeric statistics object
+     */
     protected async calculateNumberStats(surveyId: string, questionId: string): Promise<{ type: string; count: number; average: number; min: number; max: number; median: number; mode: any[] | null; percentile25: number | null; percentile75: number | null; values: any; }> {
         throw new Error('Method not implemented.');
     }
 
+    /**
+     * Calculates statistics for date questions
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to date statistics object
+     */
     protected async calculateDateStats(surveyId: string, questionId: string): Promise<{ type: string; count: any; average: string | null; min: string | null; max: string | null; median: string | null; mode: any[] | null; percentile25: string | null; percentile75: string | null; values: any; }> {
         throw new Error('Method not implemented.');
     }
 
+    /**
+     * Calculates statistics for choice questions (single or multiple)
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @param isMultiple - Whether the question allows multiple selections
+     * @returns Promise resolving to choice statistics object
+     */
     protected async calculateChoiceStats(surveyId: string, questionId: string, isMultiple: boolean): Promise<{ type: string; count: number; totalSelections?: number; choices: Record<string, number>; mostSelected: Array<{ choice: any; count: any; }>; }> {
         throw new Error('Method not implemented.');
     }
 
+    /**
+     * Calculates statistics for rating questions
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to rating statistics object
+     */
     protected async calculateRatingStats(surveyId: string, questionId: string): Promise<{ type: string; count: any; average: any; min: any; max: any; median: any; mode: any[] | null; distribution: Record<number, number>; values: any; }> {
         throw new Error('Method not implemented.');
     }
 
+    /**
+     * Calculates statistics for ranking questions
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to ranking statistics object
+     */
     protected async calculateRankingStats(surveyId: string, questionId: string): Promise<{ type: string; count: number; averageRankings: Record<string, number>; mostPreferred: Array<{ item: string; rank: number; }>; leastPreferred: Array<any>; values: Array<Array<any>>; }> {
         throw new Error('Method not implemented.');
     }
 
+    /**
+     * Calculates statistics for text questions including NLP analysis
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @returns Promise resolving to text statistics object with sentiment analysis
+     */
     protected async calculateTextStats(surveyId: string, questionId: string): Promise<{ type: string; count: number; averageLength: number; minLength: number; maxLength: number; medianLength: number; sentimentAnalysis: { average: number; positive: number; negative: number; neutral: number; } | null; commonWords: Array<any>; values: Array<string>; }> {
         throw new Error('Method not implemented.');
     }
 
+    /**
+     * Calculates monthly statistics for date questions within a specific year
+     * @param surveyId - Survey identifier
+     * @param questionId - Question identifier
+     * @param year - Year to analyze
+     * @returns Promise resolving to monthly statistics object
+     */
     protected async calculateMonthlyStats(surveyId: string, questionId: string, year: number): Promise<{ type: string; count: any; values: any }> {
         throw new Error('Method not implemented.');
     }
 
+    /**
+     * Invalidates cached statistics for all questions in a survey
+     * @param surveyId - Survey identifier to clear cache for
+     */
     async updateStatsCache(surveyId: string) {
         const survey = await this.db.collection<{_id: string, [index: string]: any}>('surveys').findOne({ _id: surveyId });
         if (!survey) return;
@@ -104,6 +169,11 @@ export class SurveyAnalytics {
         }
     }
 
+    /**
+     * Processes text responses through NLP service for sentiment analysis
+     * Only processes text responses longer than 15 characters
+     * @param response - Survey response object containing answers
+     */
     async processTextResponses(response: any) {
         const textQuestions = Object.entries(response.answers)
             .filter(([_, answer]) => typeof answer === 'string' && answer.length > 15);

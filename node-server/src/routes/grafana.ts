@@ -7,6 +7,11 @@ import { SurveyAnalyticsMongo } from '../services/analytics-mongo';
 
 export const router = Router();
 
+/**
+ * GET /
+ * Returns API information and available routes for Grafana datasource
+ * @returns JSON response with API information and route descriptions
+ */
 router.get("/", (req, res) => {
   res.json({
     message: "SurveyJS Grafana data source API is running",
@@ -18,6 +23,13 @@ router.get("/", (req, res) => {
   });
 });
 
+/**
+ * POST /search
+ * Searches for surveys and questions to populate Grafana dropdowns
+ * @param query - Search query object from request body
+ * @param query.surveyId - Optional survey ID to search within
+ * @returns JSON response with available surveys or questions for selection
+ */
 router.post("/search", async (req, res) => {
   const db = getDb();
   try {
@@ -40,6 +52,13 @@ router.post("/search", async (req, res) => {
   }
 });
 
+/**
+ * POST /query
+ * Executes data queries for Grafana dashboards
+ * @param targets - Array of query targets from request body
+ * @param range - Time range object with from/to timestamps
+ * @returns JSON response with query results for each target
+ */
 router.post("/query", async (req, res) => {
   const db = getDb();
   const redisClient = getRedisClient();
@@ -97,6 +116,13 @@ router.post("/query", async (req, res) => {
   }
 });
 
+/**
+ * GET /annotations
+ * Retrieves annotations for Grafana time series
+ * @param from - Start timestamp from query parameters
+ * @param to - End timestamp from query parameters
+ * @returns JSON response with annotation data for the time range
+ */
 router.get('/annotations', async (req, res) => {
   try {
     const { from, to } = req.query;

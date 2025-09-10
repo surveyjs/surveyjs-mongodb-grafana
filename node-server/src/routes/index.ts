@@ -5,6 +5,13 @@ import { SurveyAnalyticsInMemory } from '../services/analytics-in-memory';
 
 export const router = Router();
 
+/**
+ * GET /stats/:surveyId/:questionId
+ * Retrieves comprehensive statistics for a specific survey question
+ * @param surveyId - Survey identifier from URL parameter
+ * @param questionId - Question identifier from URL parameter
+ * @returns JSON response with question statistics or error message
+ */
 router.get('/stats/:surveyId/:questionId', async (req, res) => {
     const db = getDb();
     const redisClient = getRedisClient();
@@ -18,6 +25,13 @@ router.get('/stats/:surveyId/:questionId', async (req, res) => {
     }
 });
 
+/**
+ * POST /post
+ * Submits a new survey response and triggers analytics processing
+ * @param postId - Survey ID from request body
+ * @param surveyResult - Response data from request body
+ * @returns JSON response with stored response data or error message
+ */
 router.post("/post", async (req, res) => {
     const db = getDb();
     const redisClient = getRedisClient();
@@ -63,6 +77,12 @@ router.post("/post", async (req, res) => {
 //   res.status(201).json({...response, _id: result.insertedId});
 // });
 
+/**
+ * GET /surveys/:id
+ * Retrieves a specific survey by its ID
+ * @param id - Survey identifier from URL parameter
+ * @returns JSON response with survey JSON configuration or error message
+ */
 router.get('/surveys/:id', async (req, res) => {
     const db = getDb();
     try {
@@ -74,6 +94,11 @@ router.get('/surveys/:id', async (req, res) => {
     }
 });
 
+/**
+ * GET /health
+ * Performs health check by testing Redis connection
+ * @returns JSON response with service health status and timestamp
+ */
 router.get('/health', async (req, res) => {
     try {
         const redisClient = getRedisClient();
