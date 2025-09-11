@@ -1,35 +1,40 @@
-# NLP Service
+# Natural Language Processing (NLP) Service
 
-A FastAPI-based Natural Language Processing service that provides text analysis capabilities for the SurveyJS MongoDB Grafana integration project.
+A FastAPI-based NLP service that analyzes survey text responses and extracts insights using a variety of natural language processing techniques. This service enables integration between SurveyJS and Grafana.
 
-## Overview
+## Key Features
 
-The NLP Service is a microservice designed to analyze survey text responses and extract meaningful insights through various NLP techniques. It processes text data from survey responses and provides sentiment analysis, named entity recognition, and key phrase extraction.
+- **Sentiment Analysis**    
+Evaluates text sentiment, returning polarity, subjectivity, and a sentiment label (positive/negative/neutral).
+- **Named Entity Recognition (NER)**    
+Detects and extracts named entities such as people, organizations, and locations.
+- **Key Phrase Extraction**     
+Identifies important noun phrases using chunking techniques.
+- **RESTful API**   
+Exposes clean, well-structured HTTP endpoints for text analysis.
 
-## Features
+## Technology Stack
 
-- **Sentiment Analysis**: Analyzes text sentiment using TextBlob, providing polarity, subjectivity, and sentiment labels (positive/negative/neutral)
-- **Named Entity Recognition (NER)**: Identifies and extracts named entities (people, organizations, locations, etc.) using spaCy
-- **Key Phrase Extraction**: Extracts important noun phrases from text using spaCy's noun chunking
-- **RESTful API**: Provides clean HTTP endpoints for text analysis
+- [FastAPI](https://fastapi.tiangolo.com/) &ndash; A modern, high-performance framework for building APIs.
+- [Uvicorn](https://www.uvicorn.org/) &ndash; ASGI server for running FastAPI apps.
+- [spaCy](https://spacy.io/) &ndash; Advanced NLP library for entity recognition and linguistic processing.
+- [TextBlob](https://textblob.readthedocs.io/en/dev/) &ndash; Lightweight library for sentiment analysis.
+- [Python 3.9](https://www.python.org/) &ndash; Runtime environment.
+
+## How It Works
+
+The NLP service integrates with the SurveyJS application through the Node.js backend. The `SurveyAnalytics` class in [`node-server/src/services/analytics.ts`](../node-server/src/services/analytics.ts) collects survey text responses longer than 15 characters and forwards them to the NLP service. The results are stored in MongoDB under the `nlp` field, alongside the original response data.
+
+The service URL can be configured via the `NLP_SERVICE_URL` environment variable (default: `http://nlp-service:5000`).
 
 ## API Endpoints
 
-### Health Check
-- **GET** `/health`
-  - Returns service health status and timestamp
-  - Response: `{"status": "healthy", "timestamp": "2024-01-01T12:00:00"}`
-
-### Sentiment Analysis (GET)
-- **GET** `/sentiment?text={text}`
-  - Analyzes sentiment of provided text via query parameter
-  - Returns comprehensive NLP analysis results
-
-### Text Analysis (POST)
-- **POST** `/analyze`
-  - Analyzes text provided in request body
-  - Request body: `{"text": "Your text to analyze"}`
-  - Returns comprehensive NLP analysis results
+- **GET** `/health`     
+Returns service health status and a timestamp. Example: `{"status": "healthy", "timestamp": "2024-01-01T12:00:00"}`.
+- **GET** `/sentiment?text={text}`    
+Analyzes the sentiment of the text provided as a query parameter and returns [analysis results](#response-format).
+- **POST** `/analyze`   
+Analyzes text from the request body&mdash;`{"text": "Your text to analyze"}`&mdash;and returns [analysis results](#response-format).
 
 ## Response Format
 
@@ -55,24 +60,7 @@ All analysis endpoints return a JSON object with the following structure:
 }
 ```
 
-## Technology Stack
-
-- **FastAPI**: Modern, fast web framework for building APIs
-- **spaCy**: Advanced NLP library for named entity recognition and text processing
-- **TextBlob**: Simple sentiment analysis library
-- **Python 3.9**: Runtime environment
-- **Uvicorn**: ASGI server for FastAPI
-
-## Integration
-
-The NLP Service integrates with the main SurveyJS application through the Node.js backend:
-
-- The `SurveyAnalytics` class in `node-server/src/services/analytics.ts` calls the NLP service
-- Text responses longer than 15 characters are automatically processed
-- Results are stored in MongoDB with the response data under the `nlp` field
-- Service URL is configurable via `NLP_SERVICE_URL` environment variable (defaults to `http://nlp-service:5000`)
-
-## Docker Deployment
+## Setup
 
 The service is containerized and runs as part of the Docker Compose stack:
 
@@ -80,9 +68,8 @@ The service is containerized and runs as part of the Docker Compose stack:
 - **Network**: analytics-net
 - **Dependencies**: Automatically downloads spaCy English model (`en_core_web_sm`)
 
-## Development
+To run the NLP service locally, do the following:
 
-### Local Setup
 ```bash
 # Install dependencies
 pip install -r requirements.txt
@@ -90,17 +77,11 @@ pip install -r requirements.txt
 # Download spaCy model
 python -m spacy download en_core_web_sm
 
-# Run development server
+# Start development server
 uvicorn app:app --reload
 ```
 
-### Dependencies
-- fastapi
-- uvicorn
-- textblob
-- spacy
-
-## Usage Example
+## Usage Examples
 
 ```bash
 # Health check
