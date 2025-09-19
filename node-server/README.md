@@ -1,134 +1,79 @@
-# Node Server - SurveyJS Analytics Service
+# SurveyJS Analytics Service
 
-A comprehensive Node.js backend service that provides survey management, data collection, and advanced analytics capabilities for the SurveyJS MongoDB Grafana integration project.
+A Node.js backend service that powers survey lifecycle management, response collection, and advanced analytics. It is a core component of the SurveyJS&ndash;Grafana integration, providing structured storage, fast processing, and APIs for visualization.
 
-## Overview
+## Key Features
 
-The Node Server is the core backend service that handles survey lifecycle management, response collection, and provides sophisticated analytics through multiple data processing engines. It integrates with MongoDB for data persistence, Redis for caching, and the NLP service for text analysis.
-
-## Features
-
-### Survey Management
-- **Survey CRUD Operations**: Create, read, update, and delete surveys
-- **Survey Storage**: MongoDB-based persistent storage with JSON schema support
-- **Response Collection**: Automated response processing and storage
-- **Survey Metadata**: Name management and survey configuration
-
-### Analytics Engine
-- **Multi-Engine Support**: Both in-memory and MongoDB aggregation analytics
-- **Question Type Analysis**: Support for all SurveyJS question types
-- **Statistical Calculations**: Mean, median, mode, percentiles, distributions
-- **Real-time Processing**: Automatic analytics updates on new responses
-
-### Question Type Support
-- **Numeric Questions**: Statistical analysis with percentiles and distributions
-- **Date Questions**: Temporal analysis with monthly/yearly breakdowns
-- **Choice Questions**: Single and multiple choice analysis with popularity metrics
-- **Rating Questions**: Rating distribution and statistical analysis
-- **Ranking Questions**: Preference analysis and ranking statistics
-- **Text Questions**: Length analysis, sentiment analysis, and common word extraction
-
-### Integration Features
-- **NLP Integration**: Automatic text analysis for responses longer than 15 characters
-- **Grafana Data Source**: Full Grafana datasource API implementation
-- **Caching Layer**: Redis-based caching for improved performance
-- **Health Monitoring**: Comprehensive health checks for all services
-
-## API Endpoints
-
-### Survey Management API (`/api`)
-
-#### Survey Operations
-- **GET** `/api/getActive` - Retrieve all active surveys
-- **GET** `/api/getSurvey?surveyId={id}` - Get specific survey by ID
-- **GET** `/api/create?name={name}` - Create new survey
-- **GET** `/api/delete?id={id}` - Delete survey by ID
-- **GET** `/api/changeName?id={id}&name={name}` - Update survey name
-- **POST** `/api/changeJson` - Update survey JSON configuration
-  - Body: `{"id": "survey_id", "json": "survey_json"}`
-
-#### Response Operations
-- **GET** `/api/results?postId={id}` - Get survey responses
-- **POST** `/api/post` - Submit survey response
-  - Body: `{"postId": "survey_id", "surveyResult": {...}}`
-
-### Analytics API (`/api`)
-
-#### Statistics
-- **GET** `/api/stats/{surveyId}/{questionId}` - Get question statistics
-- **GET** `/api/health` - Service health check
-
-### Grafana Data Source API (`/grafana`)
-
-#### Grafana Integration
-- **GET** `/grafana/` - API information and available routes
-- **POST** `/grafana/search` - Search surveys and questions for Grafana
-- **POST** `/grafana/query` - Query data for Grafana dashboards
-- **GET** `/grafana/annotations` - Get annotations for time series
+- Survey management
+  - CRUD operations on surveys 
+  - MongoDB survey storage
+  - Automated response collection and storage
+  - Survey metadata management (name and survey configuration)
+- Analytics engine
+  - Both in-memory and MongoDB aggregation
+  - Support for all SurveyJS question types
+  - Mean, median, mode, distribution, and percentile calculations
+  - Real-time updates on new responses
+- Natural language processing (NLP) for responses longer than 15 characters
+- Grafana data source API implementation
+- Redis-based caching for improved performance
+- Health checks for all services
 
 ## Technology Stack
 
-### Core Technologies
-- **Node.js**: Runtime environment
-- **TypeScript**: Type-safe development
-- **Express.js**: Web framework
-- **MongoDB**: Primary database
-- **Redis**: Caching layer
+- [SurveyJS Core](https://www.npmjs.com/package/survey-core) &ndash; Survey model and question types.
+- [NLP Service](../nlp-service/readme.md) &ndash; Service for text analysis.
+- [Express.js](https://expressjs.com/) &ndash; Web application framework.
+- [MongoDB](https://www.mongodb.com/) &ndash; Primary database.
+- [Redis](https://redis.io/) &ndash; Database for caching.
+- [Node.js](https://nodejs.org/) &ndash; Runtime environment.
 
-### Survey Framework
-- **SurveyJS Core**: Survey model and question types
-- **Survey Storage**: Custom storage adapter for MongoDB
+## How It Works
 
-### Analytics Libraries
-- **Custom Analytics Engine**: In-memory and MongoDB aggregation
-- **Statistical Functions**: Median, mode, percentile calculations
-- **NLP Integration**: Text analysis via external service
+The service handles survey creation, response collection, and analytics in a unified workflow. Surveys are defined in JSON and stored in MongoDB, while responses are submitted by users and saved with additional metadata (date, survey ID, and user ID). Textual answers that exceed a certain length are forwarded to an NLP service for sentiment analysis, entity extraction, and keyword detection.
 
-## Architecture
+Analytics are recalculated whenever new responses arrive. Depending on dataset size, the system chooses between in-memory calculations for smaller data or MongoDB aggregations for larger volumes. Processed results are cached in Redis to reduce repeated computation and speed up queries. Grafana retrieves this data through a dedicated API rather than connecting to MongoDB directly, which ensures consistent queries and real-time updates in dashboards.
 
-### Service Components
+## API Endpoints
 
-#### Database Layer
-- **MongoDB Connection**: Primary data persistence
-- **Redis Cache**: Performance optimization
-- **Connection Management**: Singleton pattern for database connections
+### Survey Management & Analytics API
 
-#### Storage Adapters
-- **MongoStorage**: MongoDB-specific survey storage
-- **NoSqlCrudAdapter**: Generic NoSQL CRUD operations
-- **SurveyStorage**: Abstract survey storage interface
+| Method | Endpoint | Description | Body |
+|--------|---------|------------|------|
+| GET    | `/api/getActive` | Retrieves all active surveys. | — |
+| GET    | `/api/getSurvey?surveyId={id}` | Gets a specific survey by ID. | — |
+| GET    | `/api/create?name={name}` | Creates a new survey. | — |
+| GET    | `/api/delete?id={id}` | Deletes a survey by ID. | — |
+| GET    | `/api/changeName?id={id}&name={name}` | Updates a survey name. | — |
+| POST   | `/api/changeJson` | Updates a survey JSON configuration. | `{ "id": "survey_id", "json": "survey_json" }` |
+| GET    | `/api/results?postId={id}` | Retrieves survey responses. | — |
+| POST   | `/api/post` | Submits a survey response. | `{ "postId": "survey_id", "surveyResult": {...} }` |
+| GET    | `/api/stats/{surveyId}/{questionId}` | Retrieves statistics for a specific question. | — |
+| GET    | `/api/health` | Service health check. | — |
 
-#### Analytics Services
-- **SurveyAnalytics**: Base analytics class with caching
-- **SurveyAnalyticsInMemory**: In-memory analytics processing
-- **SurveyAnalyticsMongo**: MongoDB aggregation analytics
+### Grafana Data Source API
 
-#### Route Handlers
-- **Main API Routes**: Survey and response management
-- **Grafana Routes**: Grafana datasource integration
-- **Health Routes**: Service monitoring
-
-### Data Flow
-
-1. **Survey Creation**: User creates survey → Stored in MongoDB
-2. **Response Submission**: User submits response → Stored with metadata
-3. **Analytics Processing**: Response triggers analytics calculation
-4. **NLP Processing**: Text responses sent to NLP service
-5. **Cache Update**: Analytics results cached in Redis
-6. **Grafana Integration**: Data exposed via Grafana API
+| Method | Endpoint | Description |
+|--------|---------|------------|
+| GET    | `/grafana/` | Returns API information and available routes. |
+| POST   | `/grafana/search` | Searches surveys and questions for Grafana. |
+| POST   | `/grafana/query` | Queries survey data for Grafana dashboards. |
+| GET    | `/grafana/annotations` | Retrieves annotations for time series. |
 
 ## Configuration
 
-### Environment Variables
-- `PORT`: Server port (default: 3000)
-- `MONGO_URI`: MongoDB connection string
-- `REDIS_URL`: Redis connection string
-- `NLP_SERVICE_URL`: NLP service endpoint (default: http://nlp-service:5000)
-- `DATABASE_LOG`: Enable database operation logging
+The service is configured through [environment variables](.env):
 
-### Database Schema
+- `PORT` defines the port on which the server listens (default: 8001).
+- `MONGO_URI` sets the MongoDB connection string.
+- `REDIS_URL` provides the Redis connection string.
+- `NLP_SERVICE_URL` specifies the NLP service endpoint (default: http://localhost:5000).
+- `DATABASE_LOG` enables or disables database operation logging.
 
-#### Surveys Collection
+## Database Schema
+
+### Surveys Collection
+
 ```json
 {
   "_id": "survey_id",
@@ -137,7 +82,8 @@ The Node Server is the core backend service that handles survey lifecycle manage
 }
 ```
 
-#### Responses Collection
+### Responses Collection
+
 ```json
 {
   "_id": "response_id",
@@ -155,9 +101,16 @@ The Node Server is the core backend service that handles survey lifecycle manage
 }
 ```
 
-## Development
+## Setup
 
-### Local Setup
+The service is containerized and runs as part of the Docker Compose stack:
+
+- **Port**: 3000
+- **Network**: analytics-net
+- **Dependencies**: MongoDB, Redis, NLP Service
+
+To run the Node Server locally, do the following:
+
 ```bash
 # Install dependencies
 npm install
@@ -175,57 +128,21 @@ npm test
 npm run test:coverage
 ```
 
-### Docker Deployment
-The service is containerized and runs as part of the Docker Compose stack:
-- **Port**: 3000
-- **Network**: analytics-net
-- **Dependencies**: MongoDB, Redis, NLP Service
-
-## Performance Features
-
-### Caching Strategy
-- **Analytics Caching**: 15-minute TTL for question statistics
-- **Cache Invalidation**: Automatic cache clearing on data updates
-- **Redis Integration**: Distributed caching for scalability
-
-### Optimization
-- **MongoDB Aggregation**: Efficient database queries for large datasets
-- **In-Memory Processing**: Fast analytics for smaller datasets
-- **Connection Pooling**: Optimized database connections
-
-## Monitoring
-
-### Health Checks
-- **Database Connectivity**: MongoDB and Redis connection status
-- **Service Status**: Overall service health
-- **Timestamp Tracking**: Response time monitoring
-
-### Error Handling
-- **Graceful Degradation**: Service continues with reduced functionality
-- **Error Logging**: Comprehensive error tracking
-- **NLP Fallback**: Continues without NLP if service unavailable
-
 ## Usage Examples
 
-### Create Survey
 ```bash
+# Create a survey
 curl "http://localhost:3000/api/create?name=Customer%20Feedback"
-```
 
-### Submit Response
-```bash
+# Submit a response
 curl -X POST http://localhost:3000/api/post \
   -H "Content-Type: application/json" \
   -d '{"postId": "survey_id", "surveyResult": {"q1": "Excellent service!"}}'
-```
 
-### Get Analytics
-```bash
+# Retrieve analytics
 curl "http://localhost:3000/api/stats/survey_id/question_1"
-```
 
-### Grafana Query
-```bash
+# Query data for Grafana
 curl -X POST http://localhost:3000/grafana/query \
   -H "Content-Type: application/json" \
   -d '{"targets": [{"surveyId": "survey_id", "questionId": "q1"}]}'

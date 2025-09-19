@@ -1,6 +1,6 @@
 # Natural Language Processing (NLP) Service
 
-A FastAPI-based NLP service that analyzes survey text responses and extracts insights using a variety of natural language processing techniques. This service enables integration between SurveyJS and Grafana.
+A FastAPI-based NLP service that analyzes survey text responses and extracts insights using a variety of natural language processing techniques. This service provides NLP capabilities as part of the overall integration between SurveyJS and Grafana.
 
 ## Key Features
 
