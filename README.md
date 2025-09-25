@@ -4,11 +4,11 @@ A full-stack solution for building survey analytics dashboards with SurveyJS, Mo
 
 ## Architecture
 
+- SurveyJS provides survey data models.
 - Node.js backend handles surveys, responses, analytics, and Grafana queries.
 - NLP service performs sentiment and text analysis.
-- Grafana plugin visualizes survey data in real time.
-- SurveyJS provides survey data models.
 - Redis caches analytics for faster performance.
+- Grafana plugin visualizes survey data in real time.
 
 ```
        Redis Cache  MongoDB
@@ -24,8 +24,8 @@ SurveyJS → Node.js Backend → Grafana Plugin → Grafana Dashboards
 - [`mongo`](/mongo/) - MongoDB configuration
 - [`nlp-service`](/nlp-service/) - Natural language processing service
 - [`grafana`](/grafana/) - Grafana configuration
-  - [`provisioning`](/grafana/provisioning/) - Automatic configuration files
-  - [`surveyjs-grafana-datasource`](/grafana/surveyjs-grafana-datasource/) - Plugin for analytics visualization
+- [`provisioning`](/grafana/provisioning/) - Automatic configuration files
+- [`surveyjs-grafana-datasource`](/grafana/surveyjs-grafana-datasource/) - Plugin for analytics visualization
 
 ## Quick Start
 
