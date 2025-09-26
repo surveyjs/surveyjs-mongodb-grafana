@@ -24,8 +24,8 @@ SurveyJS → Node.js Backend → Grafana Plugin → Grafana Dashboards
 - [`mongo`](/mongo/) - MongoDB configuration
 - [`nlp-service`](/nlp-service/) - Natural language processing service
 - [`grafana`](/grafana/) - Grafana configuration
-- [`provisioning`](/grafana/provisioning/) - Automatic configuration files
-- [`surveyjs-grafana-datasource`](/grafana/surveyjs-grafana-datasource/) - Plugin for analytics visualization
+  - [`grafana/provisioning`](/grafana/provisioning/) - Automatic configuration files
+  - [`grafana/surveyjs-grafana-datasource`](/grafana/surveyjs-grafana-datasource/) - Plugin for analytics visualization
 
 ## Quick Start
 
