@@ -1,17 +1,17 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
-  "name": "SurveyJS Responses Datasource",
+  "name": "SurveyJS Responses Data Source",
   "id": "surveyjs-grafana-datasource",
-  "backend": true,
+  "backend": false,
   "metrics": true,
   "info": {
-    "description": "SurveyJS Responses MongoDB Grafana Datasource Plugin",
+    "description": "Data source for SurveyJS responses stored in MongoDB",
     "author": {
-      "name": "tsv2013",
+      "name": "SurveyJS",
       "url": "https://surveyjs.io"
     },
-    "keywords": [],
+    "keywords": ["survey", "form", "questionnaire"],
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
@@ -19,11 +19,11 @@
     "links": [
       {
         "name": "Website",
-        "url": "https://github.com/grafana/grafana-starter-datasource"
+        "url": "https://github.com/surveyjs/surveyjs-mongodb-grafana/tree/master/grafana/surveyjs-grafana-datasource"
       },
       {
         "name": "License",
-        "url": "https://github.com/grafana/grafana-starter-datasource/blob/master/LICENSE"
+        "url": "https://github.com/surveyjs/surveyjs-mongodb-grafana/blob/master/grafana/surveyjs-grafana-datasource/LICENSE"
       }
     ],
     "screenshots": [],
