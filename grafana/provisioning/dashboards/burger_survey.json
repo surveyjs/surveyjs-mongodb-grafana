@@ -1,10 +1,51 @@
 {
-  "title": "Burger Survey Analytics",
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "liveNow": false,
   "panels": [
     {
       "datasource": {
         "type": "surveyjs-grafana-datasource",
         "uid": "P35291074DEBCE0FA"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 3,
@@ -12,14 +53,32 @@
         "x": 0,
         "y": 0
       },
+      "id": 1,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
-          "surveyId": "burger_survey_2023",
-          "refId": "A"
+          "refId": "A",
+          "surveyId": "burger_survey_2023"
         }
       ],
       "title": "Total Responses",
@@ -33,8 +92,82 @@
       "fieldConfig": {
         "defaults": {
           "color": {
+            "fixedColor": "light-blue",
+            "mode": "fixed"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 30,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none",
+          "unitScale": true
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 4,
+        "y": 0
+      },
+      "id": 8,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/^Average$/",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "10.3.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "surveyjs-grafana-datasource",
+            "uid": "P35291074DEBCE0FA"
+          },
+          "queryText": "",
+          "questionId": "q1",
+          "refId": "A",
+          "surveyId": "burger_survey_2023"
+        }
+      ],
+      "title": "Average Burgers Per Month",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "surveyjs-grafana-datasource",
+        "uid": "P35291074DEBCE0FA"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
             "mode": "thresholds"
           },
+          "mappings": [],
           "max": 5,
           "min": 0,
           "thresholds": {
@@ -51,14 +184,16 @@
             ]
           },
           "unitScale": true
-        }
-      },      
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 3,
-        "w": 13,
-        "x": 4,
+        "w": 12,
+        "x": 8,
         "y": 0
       },
+      "id": 2,
       "options": {
         "displayMode": "gradient",
         "maxVizHeight": 300,
@@ -76,16 +211,17 @@
         "showUnfilled": true,
         "sizing": "auto",
         "valueMode": "color"
-      },      
+      },
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
-          "surveyId": "burger_survey_2023",
           "questionId": "q5",
-          "refId": "A"
+          "refId": "A",
+          "surveyId": "burger_survey_2023"
         }
       ],
       "title": "Average Satisfaction Rating",
@@ -96,11 +232,77 @@
         "type": "surveyjs-grafana-datasource",
         "uid": "P35291074DEBCE0FA"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
-        "w": 9,
+        "w": 12,
         "x": 0,
         "y": 3
+      },
+      "id": 3,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "targets": [
         {
@@ -108,12 +310,12 @@
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
-          "surveyId": "burger_survey_2023",
           "questionId": "q3",
-          "refId": "A"
+          "refId": "A",
+          "surveyId": "burger_survey_2023"
         }
       ],
-      "title": "Favorite Burger Distribution",
+      "title": "Favorite Burgers",
       "transformations": [
         {
           "id": "convertFieldType",
@@ -135,11 +337,80 @@
         "type": "surveyjs-grafana-datasource",
         "uid": "P35291074DEBCE0FA"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "max": 4,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none",
+          "unitScale": false
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 8,
         "w": 8,
-        "x": 9,
+        "x": 12,
         "y": 3
+      },
+      "id": 4,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "targets": [
         {
@@ -147,9 +418,9 @@
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
-          "surveyId": "burger_survey_2023",
           "questionId": "q6",
-          "refId": "A"
+          "refId": "A",
+          "surveyId": "burger_survey_2023"
         }
       ],
       "title": "Aspect Ranking Importance",
@@ -160,11 +431,77 @@
         "type": "surveyjs-grafana-datasource",
         "uid": "P35291074DEBCE0FA"
       },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 10,
         "w": 12,
         "x": 0,
         "y": 11
+      },
+      "id": 5,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "targets": [
         {
@@ -172,9 +509,9 @@
             "type": "surveyjs-grafana-datasource",
             "uid": "P35291074DEBCE0FA"
           },
-          "surveyId": "burger_survey_2023",
           "questionId": "q4",
-          "refId": "A"
+          "refId": "A",
+          "surveyId": "burger_survey_2023"
         }
       ],
       "title": "Toppings Preference",
@@ -199,12 +536,106 @@
         "type": "surveyjs-grafana-datasource",
         "uid": "P35291074DEBCE0FA"
       },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": -1,
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "fieldMinMax": false,
+          "mappings": [],
+          "min": 1,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#e51f1f",
+                "value": 1
+              },
+              {
+                "color": "#f2a134",
+                "value": 2
+              },
+              {
+                "color": "#f7e379",
+                "value": 3
+              },
+              {
+                "color": "#bbdb44",
+                "value": 4
+              },
+              {
+                "color": "#44ce1b",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "none",
+          "unitScale": true
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 10,
-        "w": 5,
+        "w": 8,
         "x": 12,
         "y": 11
       },
+      "id": 6,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "colorByField": "Values",
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "vertical",
+        "showValue": "auto",
+        "stacking": "none",
+        "text": {
+          "valueSize": 1
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        },
+        "xField": "Values",
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "10.3.1",
       "targets": [
         {
           "datasource": {
@@ -212,24 +643,123 @@
             "uid": "P35291074DEBCE0FA"
           },
           "queryText": "values",
-          "surveyId": "burger_survey_2023",
           "questionId": "q5",
-          "refId": "A"
+          "refId": "A",
+          "surveyId": "burger_survey_2023"
         }
       ],
       "title": "Satisfaction Rating Distribution",
-      "type": "histogram"
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "",
+            "mode": "reduceRow",
+            "reduce": {
+              "include": [
+                "Values"
+              ],
+              "reducer": "count"
+            }
+          }
+        },
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Count": {
+                "aggregations": [
+                  "sum"
+                ],
+                "operation": "aggregate"
+              },
+              "Values": {
+                "aggregations": [],
+                "operation": "groupby"
+              }
+            }
+          }
+        }
+      ],
+      "type": "barchart"
     },
     {
       "datasource": {
         "type": "surveyjs-grafana-datasource",
         "uid": "P35291074DEBCE0FA"
       },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unitScale": true
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 11,
-        "w": 17,
+        "w": 20,
         "x": 0,
         "y": 21
+      },
+      "id": 7,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
       },
       "targets": [
         {
@@ -243,8 +773,24 @@
           "surveyId": "burger_survey_2023"
         }
       ],
-      "title": "Burgers Per Month Distribution",
+      "title": "Customers Per Month",
       "type": "barchart"
     }
-  ]
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Burger Survey Analytics",
+  "uid": "d5943790-8623-4f0e-81ad-26cd8bb0a07c",
+  "version": 9,
+  "weekStart": ""
 }

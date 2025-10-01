@@ -39,15 +39,17 @@ npm i
 npm run build
 
 # Build Node.js backend
-cd surveyjs-mongodb-grafana/node-server
+cd ../../node-server
 npm i
 npm run build
 
 # Prepare NLP service
+cd ../nlp-service
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 
 # Run Docker containers
+cd ..
 docker compose up -d
 ```
 
